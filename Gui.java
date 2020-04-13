@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -87,61 +88,60 @@ public class Gui extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		layeredPane = new JLayeredPane();
 		layeredPane.setBounds(0, 0, 784, 462);
 		contentPane.add(layeredPane);
 		layeredPane.setLayout(new CardLayout(0, 0));
-		
+
 		JPanel welcomePanel = createWelcomePanel();
 		layeredPane.add(welcomePanel);
 	}
-	
+
 	public static double getBmiResult() {
 		return bmiResult;
 	}
-	
+
 	private void switchPanels(JPanel panel, JLayeredPane layeredPane) {
 		layeredPane.removeAll();
 		layeredPane.add(panel);
 		layeredPane.repaint();
 		layeredPane.revalidate();
 	}
-	
 
 	private JPanel createFormPanel() {
 		formPanel = new JPanel();
 		formPanel.setBackground(new Color(253, 242, 197));
 		formPanel.setLayout(null);
-		
+
 		JLabel titleLabel = new JLabel("Please Fill Out Form");
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Toledo", Font.PLAIN, 18));
 		titleLabel.setForeground(new Color(98, 61, 69));
 		titleLabel.setBounds(131, 11, 502, 45);
 		formPanel.add(titleLabel);
-		
+
 		layeredPane2 = new JLayeredPane();
 		layeredPane2.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(128, 0, 0)));
 		layeredPane2.setBounds(10, 102, 764, 349);
 		formPanel.add(layeredPane2);
 		layeredPane2.setLayout(new CardLayout(0, 0));
-		
+
 		JPanel usUnitsPanel = createUsUnitsPanel();
 		layeredPane2.add(usUnitsPanel);
-		
+
 		JPanel metricUnitsPanel = createMetricUnitsPanel();
 		layeredPane2.add(metricUnitsPanel);
-		
+
 		JButton usButton = newUsButton();
 		formPanel.add(usButton);
-		
+
 		JButton metricButton = newMetricButton();
 		formPanel.add(metricButton);
-		
+
 		return formPanel;
 	}
-	
+
 	/**
 	 * 
 	 * @param btn
@@ -152,40 +152,54 @@ public class Gui extends JFrame {
 		btn.setFont(new Font("Toledo", Font.PLAIN, 16));
 	}
 
-	
-	
 	private JButton newUsButton() {
+		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
+		boolean fileExists = new File(fileName).exists();
+
 		usButton = new JButton("US Units");
 		usButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switchPanels(usUnitsPanel, layeredPane2);
-				
 				usButton.setBackground(new Color(222, 202, 152));
 				usButton.setForeground(new Color(66, 183, 194));
-				
+
 				metricButton.setBackground(new Color(66, 183, 194));
 				metricButton.setForeground(new Color(253, 242, 197));
 			}
 		});
-		usButton.setBackground(new Color(66, 183, 194));
-		usButton.setForeground(new Color(253, 242, 197));
 		usButton.setBackground(new Color(222, 202, 152));
 		usButton.setForeground(new Color(66, 183, 194));
 		usButton.setFont(new Font("Toledo", Font.PLAIN, 16));
 		usButton.setBounds(10, 67, 290, 37);
-		
+
+		if (fileExists) {
+			try {
+				if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+						.equals("US")) {
+					switchPanels(usUnitsPanel, layeredPane2);
+					usButton.setBackground(new Color(222, 202, 152));
+					usButton.setForeground(new Color(66, 183, 194));
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
 		return usButton;
 	}
 
 	private JButton newMetricButton() {
+		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
+		boolean fileExists = new File(fileName).exists();
+
 		metricButton = new JButton("Metric Units");
 		metricButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switchPanels(metricUnitsPanel, layeredPane2);
-				
+
 				usButton.setBackground(new Color(66, 183, 194));
 				usButton.setForeground(new Color(253, 242, 197));
-				
+
 				metricButton.setBackground(new Color(222, 202, 152));
 				metricButton.setForeground(new Color(66, 183, 194));
 			}
@@ -194,6 +208,23 @@ public class Gui extends JFrame {
 		metricButton.setBackground(new Color(66, 183, 194));
 		metricButton.setForeground(new Color(253, 242, 197));
 		metricButton.setFont(new Font("Toledo", Font.PLAIN, 16));
+
+		if (fileExists) {
+			try {
+				if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+						.equals("METRIC")) {
+					switchPanels(metricUnitsPanel, layeredPane2);
+
+					usButton.setBackground(new Color(66, 183, 194));
+					usButton.setForeground(new Color(253, 242, 197));
+
+					metricButton.setBackground(new Color(222, 202, 152));
+					metricButton.setForeground(new Color(66, 183, 194));
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 		return metricButton;
 	}
 
@@ -205,26 +236,31 @@ public class Gui extends JFrame {
 		metricUnitsPanel = new JPanel();
 		metricUnitsPanel.setBackground(new Color(222, 202, 152));
 		metricUnitsPanel.setLayout(null);
-		
+
+		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
+		boolean fileExists = new File(fileName).exists();
+
 		JLabel ageLabel = new JLabel("Age");
 		ageLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		ageLabel.setForeground(new Color(98, 61, 69));
 		ageLabel.setBounds(81, 44, 92, 45);
 		metricUnitsPanel.add(ageLabel);
-		
+
 		JTextField ageField = new JTextField();
+		if (fileExists)
+			ageField.setText(String.valueOf(person.getAge()));
 		ageField.setForeground(new Color(98, 61, 69));
 		ageField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		ageField.setBounds(129, 51, 193, 28);
 		ageField.setMargin(new Insets(5, 5, 5, 5));
 		metricUnitsPanel.add(ageField);
-		
+
 		JLabel genderLabel = new JLabel("Gender");
 		genderLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		genderLabel.setForeground(new Color(98, 61, 69));
 		genderLabel.setBounds(81, 100, 92, 45);
 		metricUnitsPanel.add(genderLabel);
-		
+
 		JRadioButton maleButton = new JRadioButton("Male");
 		maleButton.setMnemonic(KeyEvent.VK_B);
 		maleButton.setActionCommand("Male");
@@ -232,199 +268,211 @@ public class Gui extends JFrame {
 		maleButton.setBackground(new Color(222, 202, 152));
 		maleButton.setSelected(true);
 		metricUnitsPanel.add(maleButton);
-		
+
 		JRadioButton femaleButton = new JRadioButton("Female");
 		femaleButton.setMnemonic(KeyEvent.VK_B);
 		femaleButton.setActionCommand("Female");
 		femaleButton.setBounds(235, 107, 71, 31);
 		femaleButton.setBackground(new Color(222, 202, 152));
 		metricUnitsPanel.add(femaleButton);
-		
+
 		ButtonGroup group = new ButtonGroup();
-	    group.add(maleButton);
-	    group.add(femaleButton);
-		
+		group.add(maleButton);
+		group.add(femaleButton);
+
+		if (fileExists) {
+			if (person.getGender() == 1) {
+				maleButton.setSelected(true);
+			} else {
+				femaleButton.setSelected(true);
+			}
+		}
+
 		JLabel heightLabel = new JLabel("Height");
 		heightLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		heightLabel.setForeground(new Color(98, 61, 69));
 		heightLabel.setBounds(81, 156, 57, 45);
 		metricUnitsPanel.add(heightLabel);
-		
+
 		JTextField cmField = new JTextField();
+		if (fileExists)
+			cmField.setText(String.valueOf(person.getHeightCm()));
 		cmField.setForeground(new Color(98, 61, 69));
 		cmField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		cmField.setBounds(129, 163, 68, 28);
 		cmField.setMargin(new Insets(5, 5, 5, 5));
 		metricUnitsPanel.add(cmField);
-		
+
 		JLabel heightCmLabel = new JLabel("cm");
 		heightCmLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		heightCmLabel.setForeground(new Color(98, 61, 69));
 		heightCmLabel.setBounds(207, 164, 37, 28);
 		metricUnitsPanel.add(heightCmLabel);
-		
-		
+
 		JLabel weightLabel = new JLabel("Weight");
 		weightLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		weightLabel.setForeground(new Color(98, 61, 69));
 		weightLabel.setBounds(81, 212, 57, 45);
 		metricUnitsPanel.add(weightLabel);
-		
+
 		JTextField weightField = new JTextField();
+		if (fileExists)
+			weightField.setText(String.valueOf(person.getWeightKg()));
 		weightField.setForeground(new Color(98, 61, 69));
 		weightField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		weightField.setBounds(129, 219, 68, 28);
 		weightField.setMargin(new Insets(5, 5, 5, 5));
 		metricUnitsPanel.add(weightField);
-		
+
 		JLabel kgLabel = new JLabel("kg");
 		kgLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		kgLabel.setForeground(new Color(98, 61, 69));
 		kgLabel.setBounds(207, 220, 57, 28);
 		metricUnitsPanel.add(kgLabel);
-		
+
 		JLabel bustSizeLabel = new JLabel("Bust Size");
 		bustSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		bustSizeLabel.setForeground(new Color(98, 61, 69));
 		bustSizeLabel.setBounds(456, 44, 57, 45);
 		metricUnitsPanel.add(bustSizeLabel);
-		
+
 		JTextField bustSizeField = new JTextField();
+		if (fileExists)
+			bustSizeField.setText(String.valueOf(person.getBustSizeCm()));
 		bustSizeField.setForeground(new Color(98, 61, 69));
 		bustSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		bustSizeField.setBounds(552, 51, 145, 28);
 		bustSizeField.setMargin(new Insets(5, 5, 5, 5));
 		metricUnitsPanel.add(bustSizeField);
-		
+
 		JLabel bustSizeCmLabel = new JLabel("cm");
 		bustSizeCmLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		bustSizeCmLabel.setForeground(new Color(98, 61, 69));
 		bustSizeCmLabel.setBounds(705, 51, 57, 31);
 		metricUnitsPanel.add(bustSizeCmLabel);
-		
+
 		JLabel waistSizeLabel = new JLabel("Waist Size");
 		waistSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		waistSizeLabel.setForeground(new Color(98, 61, 69));
 		waistSizeLabel.setBounds(456, 100, 82, 45);
 		metricUnitsPanel.add(waistSizeLabel);
-		
+
 		JTextField waistSizeField = new JTextField();
+		if (fileExists)
+			waistSizeField.setText(String.valueOf(person.getWaistSizeCm()));
 		waistSizeField.setForeground(new Color(98, 61, 69));
 		waistSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		waistSizeField.setBounds(552, 107, 145, 28);
 		waistSizeField.setMargin(new Insets(5, 5, 5, 5));
 		metricUnitsPanel.add(waistSizeField);
-		
+
 		JLabel waistSizeCmLabel = new JLabel("cm");
 		waistSizeCmLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		waistSizeCmLabel.setForeground(new Color(98, 61, 69));
 		waistSizeCmLabel.setBounds(705, 107, 57, 31);
 		metricUnitsPanel.add(waistSizeCmLabel);
-		
+
 		JLabel highHipSizeLabel = new JLabel("High Hip Size");
 		highHipSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		highHipSizeLabel.setForeground(new Color(98, 61, 69));
 		highHipSizeLabel.setBounds(456, 156, 82, 45);
 		metricUnitsPanel.add(highHipSizeLabel);
-		
+
 		JTextField highHipSizeField = new JTextField();
+		if (fileExists)
+			highHipSizeField.setText(String.valueOf(person.getHipHeightCm()));
 		highHipSizeField.setForeground(new Color(98, 61, 69));
 		highHipSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		highHipSizeField.setBounds(552, 163, 145, 28);
 		highHipSizeField.setMargin(new Insets(5, 5, 5, 5));
 		metricUnitsPanel.add(highHipSizeField);
-		
+
 		JLabel highHipSizeCmLabel = new JLabel("cm");
 		highHipSizeCmLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		highHipSizeCmLabel.setForeground(new Color(98, 61, 69));
 		highHipSizeCmLabel.setBounds(705, 163, 57, 31);
 		metricUnitsPanel.add(highHipSizeCmLabel);
-		
+
 		JLabel hipSizeLabel = new JLabel("Hip Size");
 		hipSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		hipSizeLabel.setForeground(new Color(98, 61, 69));
 		hipSizeLabel.setBounds(456, 212, 82, 45);
 		metricUnitsPanel.add(hipSizeLabel);
-		
-		
-		
+
 		JTextField hipSizeField = new JTextField();
+		if (fileExists)
+			hipSizeField.setText(String.valueOf(person.getHipSizeCm()));
 		hipSizeField.setForeground(new Color(98, 61, 69));
 		hipSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		hipSizeField.setBounds(552, 219, 145, 28);
 		hipSizeField.setMargin(new Insets(5, 5, 5, 5));
-		hipSizeField.addKeyListener(new KeyAdapter() {
-			/*public void keyReleased(KeyEvent event) {
-				String age = ageField.getText();
-		        String height = cmField.getText();
-		        String weight = weightField.getText();
-		        String bustSize = bustSizeField.getText();
-		        String waistSize = waistSizeField.getText();
-		        String highHipSize = highHipSizeField.getText();
-		        String hipSize = hipSizeField.getText();
-		        
-		        if (!age.isEmpty() && !height.isEmpty() && !weight.isEmpty() && !bustSize.isEmpty() 
-		        		&& !waistSize.isEmpty() && !highHipSize.isEmpty() && !hipSize.isEmpty()) {
-		        	submitButton.setEnabled(true);
-		        }
-		        else submitButton.setEnabled(false);
-		    }*/
-		});
 		metricUnitsPanel.add(hipSizeField);
-		
+
 		JLabel hipSizeInchesLabel = new JLabel("cm");
 		hipSizeInchesLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		hipSizeInchesLabel.setForeground(new Color(98, 61, 69));
 		hipSizeInchesLabel.setBounds(705, 219, 57, 31);
 		metricUnitsPanel.add(hipSizeInchesLabel);
-		
-		int gender;
-		
-		if(maleButton.isSelected()) gender = 1;
-		else gender = 0;
-		
-		JButton submitButton = new JButton("Submit");		
-		//submitButton.setEnabled(false);
+
+		JLabel requireFieldsLabel = new JLabel("");
+		requireFieldsLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
+		requireFieldsLabel.setForeground(new Color(98, 61, 69));
+		requireFieldsLabel.setBounds(300, 10, 150, 45);
+		metricUnitsPanel.add(requireFieldsLabel);
+
+		JButton submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				
-				person = new Person(FirstNameField.getText(), LastNameField.getText(), Integer.parseInt(ageField.getText()), 
-						gender, Integer.parseInt(weightField.getText()), Double.parseDouble(cmField.getText()), 
-						Double.parseDouble(bustSizeField.getText()), Double.parseDouble(waistSizeField.getText()), 
-						Double.parseDouble(highHipSizeField.getText()), Double.parseDouble(hipSizeField.getText()));
-				
-				String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
-				
-				try(PrintWriter writer = new PrintWriter(fileName)) {
-					writer.println(UnitType.METRIC);
-					writer.println(FirstNameField.getText());
-					writer.println(LastNameField.getText());
-					writer.println(Integer.parseInt(ageField.getText()));
-					writer.println(gender);
-					writer.println(Integer.parseInt(weightField.getText()));
-					writer.println(Integer.parseInt(cmField.getText()));
-					writer.println(Integer.parseInt(bustSizeField.getText()));
-					writer.println(Integer.parseInt(waistSizeField.getText()));
-					writer.println(Integer.parseInt(highHipSizeField.getText()));
-					writer.println(Integer.parseInt(hipSizeField.getText()));
-					
-				} catch (FileNotFoundException ex) {
-					ex.printStackTrace();
+				if (ageField.getText().isEmpty() || cmField.getText().isEmpty() || weightField.getText().isEmpty()
+						|| bustSizeField.getText().isEmpty() || waistSizeField.getText().isEmpty()
+						|| highHipSizeField.getText().isEmpty() || hipSizeField.getText().isEmpty()) {
+					requireFieldsLabel.setText("All Fields Are Required!");
+				} else {
+					int gender;
+
+					if (maleButton.isSelected()) {
+						gender = 1;
+					} else {
+						gender = 0;
+					}
+
+					person = new Person(FirstNameField.getText(), LastNameField.getText(),
+							Integer.parseInt(ageField.getText()), gender, Double.parseDouble(weightField.getText()),
+							Double.parseDouble(cmField.getText()), Double.parseDouble(bustSizeField.getText()),
+							Double.parseDouble(waistSizeField.getText()),
+							Double.parseDouble(highHipSizeField.getText()), Double.parseDouble(hipSizeField.getText()));
+
+					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
+
+					try (PrintWriter writer = new PrintWriter(fileName)) {
+						writer.println(UnitType.METRIC);
+						writer.println(FirstNameField.getText());
+						writer.println(LastNameField.getText());
+						writer.println(Integer.parseInt(ageField.getText()));
+						writer.println(gender);
+						writer.println(Double.parseDouble(weightField.getText()));
+						writer.println(Double.parseDouble(cmField.getText()));
+						writer.println(Double.parseDouble(bustSizeField.getText()));
+						writer.println(Double.parseDouble(waistSizeField.getText()));
+						writer.println(Double.parseDouble(highHipSizeField.getText()));
+						writer.println(Double.parseDouble(hipSizeField.getText()));
+
+					} catch (FileNotFoundException ex) {
+						ex.printStackTrace();
+					}
+					mainPanel = createMainPanel();
+					layeredPane.add(mainPanel);
+
+					switchPanels(mainPanel, layeredPane);
 				}
-				mainPanel = createMainPanel();
-				layeredPane.add(mainPanel);
-				
-				switchPanels(mainPanel, layeredPane);
 			}
 		});
-		//submitButton.setEnabled(false);
 		submitButton.setBounds(332, 293, 122, 45);
 		submitButton.setBackground(new Color(66, 183, 194));
 		submitButton.setForeground(new Color(253, 242, 197));
 		submitButton.setFont(new Font("Toledo", Font.PLAIN, 16));
 		metricUnitsPanel.add(submitButton);
-		
+
 		return metricUnitsPanel;
 	}
 
@@ -436,26 +484,31 @@ public class Gui extends JFrame {
 		usUnitsPanel = new JPanel();
 		usUnitsPanel.setBackground(new Color(222, 202, 152));
 		usUnitsPanel.setLayout(null);
-		
+
+		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
+		boolean fileExists = new File(fileName).exists();
+
 		JLabel ageLabel = new JLabel("Age");
 		ageLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		ageLabel.setForeground(new Color(98, 61, 69));
 		ageLabel.setBounds(81, 44, 92, 45);
 		usUnitsPanel.add(ageLabel);
-		
+
 		JTextField ageField = new JTextField();
+		if (fileExists)
+			ageField.setText(String.valueOf(person.getAge()));
 		ageField.setForeground(new Color(98, 61, 69));
 		ageField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		ageField.setBounds(129, 51, 193, 28);
 		ageField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(ageField);
-		
+
 		JLabel genderLabel = new JLabel("Gender");
 		genderLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		genderLabel.setForeground(new Color(98, 61, 69));
 		genderLabel.setBounds(81, 100, 92, 45);
 		usUnitsPanel.add(genderLabel);
-		
+
 		JRadioButton maleButton = new JRadioButton("Male");
 		maleButton.setMnemonic(KeyEvent.VK_B);
 		maleButton.setActionCommand("Male");
@@ -463,252 +516,267 @@ public class Gui extends JFrame {
 		maleButton.setBackground(new Color(222, 202, 152));
 		maleButton.setSelected(true);
 		usUnitsPanel.add(maleButton);
-		
+
 		JRadioButton femaleButton = new JRadioButton("Female");
 		femaleButton.setMnemonic(KeyEvent.VK_B);
 		femaleButton.setActionCommand("Female");
 		femaleButton.setBounds(235, 107, 71, 31);
 		femaleButton.setBackground(new Color(222, 202, 152));
 		usUnitsPanel.add(femaleButton);
-		
+
 		ButtonGroup group = new ButtonGroup();
-	    group.add(maleButton);
-	    group.add(femaleButton);
-		
+		group.add(maleButton);
+		group.add(femaleButton);
+
+		if (fileExists) {
+			if (person.getGender() == 1) {
+				maleButton.setSelected(true);
+			} else {
+				femaleButton.setSelected(true);
+			}
+		}
+
 		JLabel heightLabel = new JLabel("Height");
 		heightLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		heightLabel.setForeground(new Color(98, 61, 69));
 		heightLabel.setBounds(81, 156, 57, 45);
 		usUnitsPanel.add(heightLabel);
-		
+
 		JTextField feetField = new JTextField();
+		if (fileExists)
+			feetField.setText(String.valueOf(person.getHeightFt()));
 		feetField.setForeground(new Color(98, 61, 69));
 		feetField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		feetField.setBounds(129, 163, 68, 28);
 		feetField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(feetField);
-		
+
 		JLabel heightFeetLabel = new JLabel("feet");
 		heightFeetLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		heightFeetLabel.setForeground(new Color(98, 61, 69));
 		heightFeetLabel.setBounds(207, 164, 37, 28);
 		usUnitsPanel.add(heightFeetLabel);
-		
+
 		JTextField inchesField = new JTextField();
+		if (fileExists)
+			inchesField.setText(String.valueOf(person.getHeightInch()));
 		inchesField.setForeground(new Color(98, 61, 69));
 		inchesField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		inchesField.setBounds(254, 163, 68, 28);
 		inchesField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(inchesField);
-		
+
 		JLabel heightInchesLabel = new JLabel("inches");
 		heightInchesLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		heightInchesLabel.setForeground(new Color(98, 61, 69));
 		heightInchesLabel.setBounds(332, 164, 52, 28);
 		usUnitsPanel.add(heightInchesLabel);
-		
+
 		JLabel weightLabel = new JLabel("Weight");
 		weightLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		weightLabel.setForeground(new Color(98, 61, 69));
 		weightLabel.setBounds(81, 212, 57, 45);
 		usUnitsPanel.add(weightLabel);
-		
+
 		JTextField weightField = new JTextField();
+		if (fileExists)
+			weightField.setText(String.valueOf(person.getWeightLbs()));
 		weightField.setForeground(new Color(98, 61, 69));
 		weightField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		weightField.setBounds(129, 219, 68, 28);
 		weightField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(weightField);
-		
+
 		JLabel poundsLabel = new JLabel("pounds");
 		poundsLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		poundsLabel.setForeground(new Color(98, 61, 69));
 		poundsLabel.setBounds(207, 220, 57, 28);
 		usUnitsPanel.add(poundsLabel);
-		
+
 		JLabel bustSizeLabel = new JLabel("Bust Size");
 		bustSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		bustSizeLabel.setForeground(new Color(98, 61, 69));
 		bustSizeLabel.setBounds(456, 44, 57, 45);
 		usUnitsPanel.add(bustSizeLabel);
-		
+
 		JTextField bustSizeField = new JTextField();
+		if (fileExists)
+			bustSizeField.setText(String.valueOf(person.getBustSizeInch()));
 		bustSizeField.setForeground(new Color(98, 61, 69));
 		bustSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		bustSizeField.setBounds(552, 51, 145, 28);
 		bustSizeField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(bustSizeField);
-		
+
 		JLabel bustSizeInchesLabel = new JLabel("inches");
 		bustSizeInchesLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		bustSizeInchesLabel.setForeground(new Color(98, 61, 69));
 		bustSizeInchesLabel.setBounds(705, 51, 57, 31);
 		usUnitsPanel.add(bustSizeInchesLabel);
-		
+
 		JLabel waistSizeLabel = new JLabel("Waist Size");
 		waistSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		waistSizeLabel.setForeground(new Color(98, 61, 69));
 		waistSizeLabel.setBounds(456, 100, 82, 45);
 		usUnitsPanel.add(waistSizeLabel);
-		
+
 		JTextField waistSizeField = new JTextField();
+		if (fileExists)
+			waistSizeField.setText(String.valueOf(person.getWaistSizeInch()));
 		waistSizeField.setForeground(new Color(98, 61, 69));
 		waistSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		waistSizeField.setBounds(552, 107, 145, 28);
 		waistSizeField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(waistSizeField);
-		
+
 		JLabel waistSizeInchesLabel = new JLabel("inches");
 		waistSizeInchesLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		waistSizeInchesLabel.setForeground(new Color(98, 61, 69));
 		waistSizeInchesLabel.setBounds(705, 107, 57, 31);
 		usUnitsPanel.add(waistSizeInchesLabel);
-		
+
 		JLabel highHipSizeLabel = new JLabel("High Hip Size");
 		highHipSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		highHipSizeLabel.setForeground(new Color(98, 61, 69));
 		highHipSizeLabel.setBounds(456, 156, 82, 45);
 		usUnitsPanel.add(highHipSizeLabel);
-		
+
 		JTextField highHipSizeField = new JTextField();
+		if (fileExists)
+			highHipSizeField.setText(String.valueOf(person.getHipHeightInch()));
 		highHipSizeField.setForeground(new Color(98, 61, 69));
 		highHipSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		highHipSizeField.setBounds(552, 163, 145, 28);
 		highHipSizeField.setMargin(new Insets(5, 5, 5, 5));
 		usUnitsPanel.add(highHipSizeField);
-		
+
 		JLabel highHipSizeInchesLabel = new JLabel("inches");
 		highHipSizeInchesLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		highHipSizeInchesLabel.setForeground(new Color(98, 61, 69));
 		highHipSizeInchesLabel.setBounds(705, 163, 57, 31);
 		usUnitsPanel.add(highHipSizeInchesLabel);
-		
+
 		JLabel hipSizeLabel = new JLabel("Hip Size");
 		hipSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		hipSizeLabel.setForeground(new Color(98, 61, 69));
 		hipSizeLabel.setBounds(456, 212, 82, 45);
 		usUnitsPanel.add(hipSizeLabel);
-		
-		
-		
+
 		JTextField hipSizeField = new JTextField();
+		if (fileExists)
+			hipSizeField.setText(String.valueOf(person.getHipSizeInch()));
 		hipSizeField.setForeground(new Color(98, 61, 69));
 		hipSizeField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		hipSizeField.setBounds(552, 219, 145, 28);
 		hipSizeField.setMargin(new Insets(5, 5, 5, 5));
-		hipSizeField.addKeyListener(new KeyAdapter() {
-			/*public void keyReleased(KeyEvent event) {
-				String age = ageField.getText();
-		        int height1 = Integer.parseInt(feetField.getText());
-		        int height2 = Integer.parseInt(inchesField.getText());
-		        int weight = Integer.parseInt(weightField.getText());
-		        int bustSize = Integer.parseInt(bustSizeField.getText());
-		        int waistSize = Integer.parseInt(waistSizeField.getText());
-		        int highHipSize = Integer.parseInt(highHipSizeField.getText());
-		        int hipSize = Integer.parseInt(hipSizeField.getText());
-		        
-		        if (!age.isEmpty() && !height1.isEmpty() && !height2.isEmpty() && !weight.isEmpty() && !bustSize.isEmpty() 
-		        		&& !waistSize.isEmpty() && !highHipSize.isEmpty() && !hipSize.isEmpty()) {
-		        	submitButton.setEnabled(true);
-		        }
-		        else submitButton.setEnabled(false);
-		    }*/
-		});
 		usUnitsPanel.add(hipSizeField);
-		
+
 		JLabel hipSizeInchesLabel = new JLabel("inches");
 		hipSizeInchesLabel.setFont(new Font("Toledo", Font.PLAIN, 12));
 		hipSizeInchesLabel.setForeground(new Color(98, 61, 69));
 		hipSizeInchesLabel.setBounds(705, 219, 57, 31);
 		usUnitsPanel.add(hipSizeInchesLabel);
-		
-		int gender;
-		
-		if(maleButton.isSelected()) gender = 1;
-		else gender = 0;
-		
-		
-		JButton submitButton = new JButton("Submit");
-		//submitButton.setEnabled(false);
-		submitButton.addActionListener(new ActionListener() {
-			
 
+		JLabel requireFieldsLabel = new JLabel("");
+		requireFieldsLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
+		requireFieldsLabel.setForeground(new Color(98, 61, 69));
+		requireFieldsLabel.setBounds(300, 10, 150, 45);
+		usUnitsPanel.add(requireFieldsLabel);
+
+		JButton submitButton = new JButton("Submit");
+		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				person = new Person(FirstNameField.getText(), LastNameField.getText(), Integer.parseInt(ageField.getText()), 
-				gender, Integer.parseInt(weightField.getText()), Integer.parseInt(feetField.getText()), 
-				Integer.parseInt(inchesField.getText()), Integer.parseInt(bustSizeField.getText()), Integer.parseInt(waistSizeField.getText()), 
-				Integer.parseInt(highHipSizeField.getText()), Integer.parseInt(hipSizeField.getText()));
-	
-				String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
-				
-				
-				try(PrintWriter writer = new PrintWriter(fileName)) {
-					writer.println(UnitType.US);
-					writer.println(FirstNameField.getText());
-					writer.println(LastNameField.getText());
-					writer.println(Integer.parseInt(ageField.getText()));
-					writer.println(gender);
-					writer.println(Integer.parseInt(weightField.getText()));
-					writer.println(Integer.parseInt(feetField.getText()));
-					writer.println(Integer.parseInt(inchesField.getText()));
-					writer.println(Integer.parseInt(bustSizeField.getText()));
-					writer.println(Integer.parseInt(waistSizeField.getText()));
-					writer.println(Integer.parseInt(highHipSizeField.getText()));
-					writer.println(Integer.parseInt(hipSizeField.getText()));
-					
-					
-				} catch (FileNotFoundException ex) {
-					ex.printStackTrace();
+				if (ageField.getText().isEmpty() || feetField.getText().isEmpty() || inchesField.getText().isEmpty()
+						|| weightField.getText().isEmpty() || bustSizeField.getText().isEmpty()
+						|| waistSizeField.getText().isEmpty() || highHipSizeField.getText().isEmpty()
+						|| hipSizeField.getText().isEmpty()) {
+					requireFieldsLabel.setText("All Fields Are Required!");
+				} else {
+
+					int gender;
+
+					if (maleButton.isSelected()) {
+						gender = 1;
+					} else {
+						gender = 0;
+					}
+
+					person = new Person(FirstNameField.getText(), LastNameField.getText(),
+							Integer.parseInt(ageField.getText()), gender, Integer.parseInt(weightField.getText()),
+							Integer.parseInt(feetField.getText()), Integer.parseInt(inchesField.getText()),
+							Integer.parseInt(bustSizeField.getText()), Integer.parseInt(waistSizeField.getText()),
+							Integer.parseInt(highHipSizeField.getText()), Integer.parseInt(hipSizeField.getText()));
+
+					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
+
+					System.out.println(gender);// DELETE
+					try (PrintWriter writer = new PrintWriter(fileName)) {
+						writer.println(UnitType.US);
+						writer.println(FirstNameField.getText());
+						writer.println(LastNameField.getText());
+						writer.println(Integer.parseInt(ageField.getText()));
+						writer.println(gender);
+						writer.println(Integer.parseInt(weightField.getText()));
+						writer.println(Integer.parseInt(feetField.getText()));
+						writer.println(Integer.parseInt(inchesField.getText()));
+						writer.println(Integer.parseInt(bustSizeField.getText()));
+						writer.println(Integer.parseInt(waistSizeField.getText()));
+						writer.println(Integer.parseInt(highHipSizeField.getText()));
+						writer.println(Integer.parseInt(hipSizeField.getText()));
+
+					} catch (FileNotFoundException ex) {
+						ex.printStackTrace();
+					}
+					mainPanel = createMainPanel();
+					layeredPane.add(mainPanel);
+
+					switchPanels(mainPanel, layeredPane);
 				}
-				mainPanel = createMainPanel();
-				layeredPane.add(mainPanel);
-				
-				switchPanels(mainPanel, layeredPane);
 			}
 		});
-		//submitButton.setEnabled(false);
+		// submitButton.setEnabled(false);
 		submitButton.setBounds(332, 293, 122, 45);
 		submitButton.setBackground(new Color(66, 183, 194));
 		submitButton.setForeground(new Color(253, 242, 197));
 		submitButton.setFont(new Font("Toledo", Font.PLAIN, 16));
 		usUnitsPanel.add(submitButton);
-		
+
 		return usUnitsPanel;
 	}
-	
-	
+
 	private JPanel createWelcomePanel() {
 		welcomePanel = new JPanel();
 		welcomePanel.setBackground(new Color(253, 242, 197));
 		welcomePanel.setLayout(null);
-		
+
 		JLabel titleLabel = new JLabel("Welcome to Fitness Calculator! Please Enter your Name");
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Toledo", Font.PLAIN, 18));
 		titleLabel.setForeground(new Color(98, 61, 69));
 		titleLabel.setBounds(119, 11, 502, 45);
 		welcomePanel.add(titleLabel);
-		
+
 		JButton btnSubmitButton = newSubmitButton();
 		welcomePanel.add(btnSubmitButton);
-		
+
 		JLabel lblFirstNameLabel = new JLabel("First Name:");
 		lblFirstNameLabel.setFont(new Font("Toledo", Font.PLAIN, 17));
 		lblFirstNameLabel.setForeground(new Color(66, 183, 194));
 		lblFirstNameLabel.setBounds(229, 129, 87, 24);
 		lblFirstNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		welcomePanel.add(lblFirstNameLabel);
-		
+
 		FirstNameField = new JTextField();
 		FirstNameField.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent event) {
 				String firstName = FirstNameField.getText();
-		        String lastName = LastNameField.getText();
-		        
-		        if (!lastName.isEmpty() && !firstName.isEmpty()) btnSubmitButton.setEnabled(true);
-		        else btnSubmitButton.setEnabled(false);
-		    }
+				String lastName = LastNameField.getText();
+
+				if (!lastName.isEmpty() && !firstName.isEmpty())
+					btnSubmitButton.setEnabled(true);
+				else
+					btnSubmitButton.setEnabled(false);
+			}
 		});
 		FirstNameField.setForeground(new Color(98, 61, 69));
 		FirstNameField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
@@ -716,23 +784,25 @@ public class Gui extends JFrame {
 		FirstNameField.setMargin(new Insets(5, 5, 5, 5));
 		welcomePanel.add(FirstNameField);
 		FirstNameField.setColumns(10);
-		
+
 		JLabel lblLastNameLabel = new JLabel("Last Name:");
 		lblLastNameLabel.setFont(new Font("Toledo", Font.PLAIN, 17));
 		lblLastNameLabel.setForeground(new Color(66, 183, 194));
 		lblLastNameLabel.setBounds(229, 205, 86, 24);
 		lblLastNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		welcomePanel.add(lblLastNameLabel);
-		
+
 		LastNameField = new JTextField();
 		LastNameField.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent event) {
 				String firstName = FirstNameField.getText();
-		        String lastName = LastNameField.getText();
-		        
-		        if (!lastName.isEmpty() && !firstName.isEmpty()) btnSubmitButton.setEnabled(true);
-		        else btnSubmitButton.setEnabled(false);
-		    }
+				String lastName = LastNameField.getText();
+
+				if (!lastName.isEmpty() && !firstName.isEmpty())
+					btnSubmitButton.setEnabled(true);
+				else
+					btnSubmitButton.setEnabled(false);
+			}
 		});
 		LastNameField.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		LastNameField.setForeground(new Color(98, 61, 69));
@@ -740,13 +810,10 @@ public class Gui extends JFrame {
 		LastNameField.setMargin(new Insets(5, 5, 5, 5));
 		welcomePanel.add(LastNameField);
 		LastNameField.setColumns(10);
-		
+
 		return welcomePanel;
 	}
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @return
@@ -755,45 +822,44 @@ public class Gui extends JFrame {
 		mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(253, 242, 197));
 		mainPanel.setLayout(null);
-		
+
 		JLabel titleLabel = new JLabel();
 		try {
-			titleLabel.setText("Hello, " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(1));
+			titleLabel.setText("Hello, " + Files
+					.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(1));
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		titleLabel.setBounds(121, 11, 502, 45);
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Toledo", Font.PLAIN, 18));
 		titleLabel.setForeground(new Color(98, 61, 69));
 		mainPanel.add(titleLabel);
-		
+
 		JPanel profilePanel = createProfilePanel();
 		mainPanel.add(profilePanel);
-		
-		JLabel progressLabel = new JLabel("Your Progress"); 
+
+		JLabel progressLabel = new JLabel("Your Progress");
 		progressLabel.setBounds(505, 67, 155, 50);
 		progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		progressLabel.setFont(new Font("Toledo", Font.PLAIN, 15));
 		progressLabel.setForeground(new Color(98, 61, 69));
 		mainPanel.add(progressLabel);
-		
+
 		JButton bmiButton = newBmiButton();
 		mainPanel.add(bmiButton);
-		
+
 		JButton bmrButton = newBmrButton();
 		mainPanel.add(bmrButton);
-		
+
 		JButton bodyTypeButton = newBodyTypeButton();
 		mainPanel.add(bodyTypeButton);
-		
+
 		JButton healthyWeightButton = newHealthyWeightButton();
 		mainPanel.add(healthyWeightButton);
-		
+
 		return mainPanel;
 	}
-	
-	
 
 	private JButton newHealthyWeightButton() {
 		JButton healthyWeightButton = new JButton("Healthy Weight");
@@ -835,7 +901,7 @@ public class Gui extends JFrame {
 		JButton bmiButton = new JButton("BMI");
 		bmiButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//double bmiResult = bmiCalculator(person);
+				// double bmiResult = bmiCalculator(person);
 				bmiResult = Calculations.bmiCalculator(person);
 				bmi.setVisible(true);
 			}
@@ -855,98 +921,182 @@ public class Gui extends JFrame {
 		profilePanel.setBackground(new Color(222, 202, 152));
 		profilePanel.setBounds(10, 71, 361, 380);
 		profilePanel.setLayout(null);
-		
+
 		JLabel profileTitle = new JLabel("Your Profile");
 		profileTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		profileTitle.setFont(new Font("Toledo", Font.PLAIN, 15));
 		profileTitle.setForeground(new Color(98, 61, 69));
 		profileTitle.setBounds(115, 22, 131, 33);
 		profilePanel.add(profileTitle);
-		
-		//boolean usUnits = Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US");
-		
+
 		JLabel fullNameLabel = new JLabel();
 		try {
-			fullNameLabel.setText(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(1) + " " + 
-					Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(2));
-		} catch (IOException e) { e.printStackTrace(); }
+			fullNameLabel.setText(
+					Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(1)
+							+ " "
+							+ Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+									.get(2));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		fullNameLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		fullNameLabel.setBounds(48, 84, 93, 25);
 		profilePanel.add(fullNameLabel);
-		
+
 		JLabel ageLabel = new JLabel();
 		try {
-			ageLabel.setText("Age " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(3));
-		} catch (IOException e) { e.printStackTrace(); }
+			ageLabel.setText("Age " + Files
+					.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(3));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		ageLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		ageLabel.setBounds(48, 138, 93, 25);
 		profilePanel.add(ageLabel);
-		
+
 		JLabel heightLabel = new JLabel();
 		try {
-			if(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) {
-				heightLabel.setText("Height " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(6) + "' " + 
-						Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(7) + "\"");
-			} else heightLabel.setText("Height " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(6) + " cm");
-			
-		} catch (IOException e) { e.printStackTrace(); }
+			if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+					.equals("US")) {
+				heightLabel.setText("Height "
+						+ Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+								.get(6)
+						+ "' "
+						+ Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+								.get(7)
+						+ "\"");
+			} else
+				heightLabel
+						.setText("Height "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(6)
+								+ " cm");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		heightLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		heightLabel.setBounds(48, 195, 93, 25);
 		profilePanel.add(heightLabel);
-		
+
 		JLabel weightLabel = new JLabel();
 		try {
-			if(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) weightLabel.setText("Weight " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(5) + " lbs");
-			else weightLabel.setText("Weight " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(5) + " kg");
-			
-		} catch (IOException e) { e.printStackTrace(); }
+			if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+					.equals("US"))
+				weightLabel
+						.setText("Weight "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(5)
+								+ " lbs");
+			else
+				weightLabel
+						.setText("Weight "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(5)
+								+ " kg");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		weightLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		weightLabel.setBounds(48, 251, 93, 25);
 		profilePanel.add(weightLabel);
-		
+
 		JLabel bustSizeLabel = new JLabel();
 		try {
-			if(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) bustSizeLabel.setText("Bust Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(8) + "\"");
-			else bustSizeLabel.setText("Bust Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(7) + " cm");
-			
-		} catch (IOException e) { e.printStackTrace(); }
+			if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+					.equals("US"))
+				bustSizeLabel
+						.setText("Bust Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(8)
+								+ "\"");
+			else
+				bustSizeLabel
+						.setText("Bust Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(7)
+								+ " cm");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		bustSizeLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		bustSizeLabel.setBounds(200, 84, 120, 25);
 		profilePanel.add(bustSizeLabel);
-		
+
 		JLabel waistSizeLabel = new JLabel();
 		try {
-			if(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) waistSizeLabel.setText("Waist Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(9) + "\"");
-			else waistSizeLabel.setText("Waist Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(8) + " cm");
-		} catch (IOException e) { e.printStackTrace(); }
+			if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+					.equals("US"))
+				waistSizeLabel
+						.setText("Waist Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(9)
+								+ "\"");
+			else
+				waistSizeLabel
+						.setText("Waist Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(8)
+								+ " cm");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		waistSizeLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		waistSizeLabel.setBounds(200, 138, 120, 25);
 		profilePanel.add(waistSizeLabel);
-		
+
 		JLabel hightHipSizeLabel = new JLabel();
 		try {
-			if(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) hightHipSizeLabel.setText("Hight Hip Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(10) + "\"");
-			else hightHipSizeLabel.setText("Hight Hip Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(9) + " cm");
-		} catch (IOException e) { e.printStackTrace(); }
+			if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+					.equals("US"))
+				hightHipSizeLabel
+						.setText("Hight Hip Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(10)
+								+ "\"");
+			else
+				hightHipSizeLabel
+						.setText("Hight Hip Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(9)
+								+ " cm");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		hightHipSizeLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		hightHipSizeLabel.setBounds(200, 195, 130, 25);
 		profilePanel.add(hightHipSizeLabel);
-		
+
 		JLabel hipSizeLabel = new JLabel();
 		try {
-			if(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) hipSizeLabel.setText("Hip Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(11) + "\"");
-			else hipSizeLabel.setText("Hip Size " + Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(10) + " cm");
-		} catch (IOException e) { e.printStackTrace(); }
+			if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0)
+					.equals("US"))
+				hipSizeLabel
+						.setText("Hip Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(11)
+								+ "\"");
+			else
+				hipSizeLabel
+						.setText("Hip Size "
+								+ Files.readAllLines(
+										Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(10)
+								+ " cm");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		hipSizeLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 		hipSizeLabel.setBounds(200, 251, 120, 25);
 		profilePanel.add(hipSizeLabel);
-		
+
 		JButton editButton = newEditButton();
 		profilePanel.add(editButton);
-		
+
 		return profilePanel;
 	}
-	
+
 	/**
 	 * 
 	 * @param btn
@@ -956,8 +1106,6 @@ public class Gui extends JFrame {
 		btn.setForeground(new Color(143, 200, 196));
 		btn.setFont(new Font("Toledo", Font.PLAIN, 17));
 	}
-	
-	
 
 	/**
 	 * 
@@ -968,7 +1116,7 @@ public class Gui extends JFrame {
 		editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				formPanel = createFormPanel();
-				
+
 				switchPanels(formPanel, layeredPane);
 			}
 		});
@@ -976,7 +1124,7 @@ public class Gui extends JFrame {
 		editButton.setBounds(115, 305, 107, 42);
 		return editButton;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -990,49 +1138,109 @@ public class Gui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 				boolean fileExists = new File(fileName).exists();
-				
-				if(fileExists) {
+
+				if (fileExists) {
 					try {
-						if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(0).equals("US")) {
-							person = new Person(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(1), 
-									Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(2), 
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(3)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(4)), 
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(5)), 
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(6)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(7)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(8)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(9)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(10)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(11))
-									);
+						if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+								.get(0).equals("US")) {
+							person = new Person(
+									Files.readAllLines(
+											Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(1),
+									Files.readAllLines(
+											Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(2),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(3)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(4)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(5)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(6)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(7)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(8)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(9)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(10)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(11)));
 						} else {
-							person = new Person(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(1), 
-									Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(2), 
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(3)),
-									Integer.parseInt(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(4)), 
-									Double.parseDouble(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(5)), 
-									Double.parseDouble(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(6)),
-									Double.parseDouble(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(7)),
-									Double.parseDouble(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(8)),
-									Double.parseDouble(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(9)),
-									Double.parseDouble(Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt")).get(10))
-									);
+							person = new Person(
+									Files.readAllLines(
+											Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(1),
+									Files.readAllLines(
+											Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(2),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(3)),
+									Integer.parseInt(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(4)),
+									Double.parseDouble(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(5)),
+									Double.parseDouble(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(6)),
+									Double.parseDouble(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(7)),
+									Double.parseDouble(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(8)),
+									Double.parseDouble(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(9)),
+									Double.parseDouble(Files
+											.readAllLines(Paths
+													.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+											.get(10)));
 						}
 					} catch (NumberFormatException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					
+
 					mainPanel = createMainPanel();
 					layeredPane.add(mainPanel);
-					
+
 					switchPanels(mainPanel, layeredPane);
 				} else {
 					formPanel = createFormPanel();
 					layeredPane.add(formPanel);
-					
+
 					switchPanels(formPanel, layeredPane);
 				}
 
