@@ -376,7 +376,7 @@ public class Gui extends JFrame {
 			e.printStackTrace();
 		}
 		heightLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		heightLabel.setBounds(48, 195, 93, 25);
+		heightLabel.setBounds(48, 195, 110, 25);
 		profilePanel.add(heightLabel);
 
 		JLabel weightLabel = new JLabel();
@@ -466,7 +466,7 @@ public class Gui extends JFrame {
 			e.printStackTrace();
 		}
 		hightHipSizeLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		hightHipSizeLabel.setBounds(200, 195, 130, 25);
+		hightHipSizeLabel.setBounds(200, 195, 160, 25);
 		profilePanel.add(hightHipSizeLabel);
 
 		JLabel hipSizeLabel = new JLabel();
