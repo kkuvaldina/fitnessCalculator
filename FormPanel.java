@@ -24,6 +24,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 
+/**
+ * 
+ * @author Kseniia
+ *
+ */
 @SuppressWarnings("serial")
 public class FormPanel extends JPanel {
 	private static JPanel metricUnitsPanel;
@@ -35,15 +40,14 @@ public class FormPanel extends JPanel {
 	static JTextField LastNameField = Gui.getLastNameField();
 	static Person person = Gui.getPerson();
 	static JPanel mainPanel = Gui.getMainPanel();
-	
+
 	/**
 	 * Create the panel.
 	 */
 	public FormPanel() {
-		
 
 	}
-	
+
 	public static JPanel createFormPanel() {
 		JPanel formPanel = new JPanel();
 		formPanel.setBackground(new Color(253, 242, 197));
@@ -73,11 +77,10 @@ public class FormPanel extends JPanel {
 
 		JButton metricButton = newMetricButton();
 		formPanel.add(metricButton);
-		
+
 		return formPanel;
 	}
-	
-	
+
 	private static JButton newUsButton() {
 		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 		boolean fileExists = new File(fileName).exists();
@@ -114,7 +117,7 @@ public class FormPanel extends JPanel {
 		return usButton;
 	}
 
- 	private static JButton newMetricButton() {
+	private static JButton newMetricButton() {
 		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 		boolean fileExists = new File(fileName).exists();
 
@@ -153,11 +156,8 @@ public class FormPanel extends JPanel {
 		}
 		return metricButton;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
+
+	//METRIC UNITS PANEL
 	private static JPanel createMetricUnitsPanel() {
 		metricUnitsPanel = new JPanel();
 		metricUnitsPanel.setBackground(new Color(222, 202, 152));
@@ -217,7 +217,7 @@ public class FormPanel extends JPanel {
 		JLabel heightLabel = new JLabel("Height");
 		heightLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		heightLabel.setForeground(new Color(98, 61, 69));
-		heightLabel.setBounds(81, 156, 57, 45);
+		heightLabel.setBounds(81, 156, 70, 45);
 		metricUnitsPanel.add(heightLabel);
 
 		JTextField cmField = new JTextField();
@@ -301,7 +301,7 @@ public class FormPanel extends JPanel {
 		JLabel highHipSizeLabel = new JLabel("High Hip Size");
 		highHipSizeLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
 		highHipSizeLabel.setForeground(new Color(98, 61, 69));
-		highHipSizeLabel.setBounds(456, 156, 82, 45);
+		highHipSizeLabel.setBounds(456, 156, 90, 45);
 		metricUnitsPanel.add(highHipSizeLabel);
 
 		JTextField highHipSizeField = new JTextField();
@@ -367,6 +367,7 @@ public class FormPanel extends JPanel {
 							Double.parseDouble(cmField.getText()), Double.parseDouble(bustSizeField.getText()),
 							Double.parseDouble(waistSizeField.getText()),
 							Double.parseDouble(highHipSizeField.getText()), Double.parseDouble(hipSizeField.getText()));
+					Gui.setPerson(person);
 
 					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 
@@ -402,10 +403,7 @@ public class FormPanel extends JPanel {
 		return metricUnitsPanel;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
+	//US UNITS PANEL
 	private static JPanel createUsUnitsPanel() {
 		usUnitsPanel = new JPanel();
 		usUnitsPanel.setBackground(new Color(222, 202, 152));
@@ -632,7 +630,9 @@ public class FormPanel extends JPanel {
 							Integer.parseInt(feetField.getText()), Integer.parseInt(inchesField.getText()),
 							Integer.parseInt(bustSizeField.getText()), Integer.parseInt(waistSizeField.getText()),
 							Integer.parseInt(highHipSizeField.getText()), Integer.parseInt(hipSizeField.getText()));
-
+					
+					Gui.setPerson(person);
+					
 					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 
 					System.out.println(gender);// DELETE
@@ -660,7 +660,6 @@ public class FormPanel extends JPanel {
 				}
 			}
 		});
-		// submitButton.setEnabled(false);
 		submitButton.setBounds(332, 293, 122, 45);
 		submitButton.setBackground(new Color(66, 183, 194));
 		submitButton.setForeground(new Color(253, 242, 197));
@@ -669,5 +668,4 @@ public class FormPanel extends JPanel {
 
 		return usUnitsPanel;
 	}
-
 }

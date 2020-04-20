@@ -1,14 +1,9 @@
 package fitnessCalculator;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLayeredPane;
@@ -23,16 +18,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
-import javax.swing.border.LineBorder;
 
 /**
  * 
@@ -41,7 +32,6 @@ import javax.swing.border.LineBorder;
  */
 @SuppressWarnings("serial")
 public class Gui extends JFrame {
-
 	private JPanel contentPane;
 	private static JLayeredPane layeredPane;
 	private static JPanel formPanel;
@@ -49,10 +39,10 @@ public class Gui extends JFrame {
 	private JPanel welcomePanel;
 	private static JTextField FirstNameField;
 	private static JTextField LastNameField;	
-	private static BMI bmi = new BMI();
-	private static BMR bmr = new BMR();
-	private static HealthyWeight healthyWeight = new HealthyWeight();
-	private static BodyType bodyType = new BodyType();
+	private static BMI bmi;
+	private static BMR bmr;
+	private static HealthyWeight healthyWeight;
+	private static BodyType bodyType;
 	static Person person;
 	static double bmiResult;
 
@@ -109,6 +99,11 @@ public class Gui extends JFrame {
 		return person;
 	}
 	
+	public static void setPerson(Person person2) {
+		person = person2;
+		
+	}
+	
 	public static JPanel getMainPanel() {
 		return mainPanel;
 	}
@@ -131,19 +126,13 @@ public class Gui extends JFrame {
 		layeredPane.revalidate();
 	}
 
-	
-
-	/**
-	 * 
-	 * @param btn
-	 */
 	private static void applyButtonDesign(JButton btn) {
 		btn.setBackground(new Color(66, 183, 194));
 		btn.setForeground(new Color(253, 242, 197));
 		btn.setFont(new Font("Toledo", Font.PLAIN, 16));
 	}
 
-
+	//WELCOME PANEL
 	private JPanel createWelcomePanel() {
 		welcomePanel = new JPanel();
 		welcomePanel.setBackground(new Color(253, 242, 197));
@@ -214,10 +203,7 @@ public class Gui extends JFrame {
 		return welcomePanel;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
+	//MAIN PANEL
 	public static JPanel createMainPanel() {
 		mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(253, 242, 197));
@@ -261,10 +247,12 @@ public class Gui extends JFrame {
 		return mainPanel;
 	}
 
+	//4 BUTTONS
 	private static JButton newHealthyWeightButton() {
 		JButton healthyWeightButton = new JButton("Healthy Weight");
 		healthyWeightButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				healthyWeight = new HealthyWeight();
 				healthyWeight.setVisible(true);
 			}
 		});
@@ -277,6 +265,7 @@ public class Gui extends JFrame {
 		JButton bodyTypeButton = new JButton("Body Type");
 		bodyTypeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				bodyType = new BodyType();
 				bodyType.setVisible(true);
 			}
 		});
@@ -289,6 +278,7 @@ public class Gui extends JFrame {
 		JButton bmrButton = new JButton("BMR");
 		bmrButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				bmr = new BMR();
 				bmr.setVisible(true);
 			}
 		});
@@ -301,8 +291,7 @@ public class Gui extends JFrame {
 		JButton bmiButton = new JButton("BMI");
 		bmiButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// double bmiResult = bmiCalculator(person);
-				bmiResult = Calculations.bmiCalculator(person);
+				bmi = new BMI();
 				bmi.setVisible(true);
 			}
 		});
@@ -311,10 +300,7 @@ public class Gui extends JFrame {
 		return bmiButton;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
+	//PROFILE PANEL
 	private static JPanel createProfilePanel() {
 		JPanel profilePanel = new JPanel();
 		profilePanel.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(98, 61, 69)));
@@ -340,7 +326,7 @@ public class Gui extends JFrame {
 			e.printStackTrace();
 		}
 		fullNameLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		fullNameLabel.setBounds(48, 84, 93, 25);
+		fullNameLabel.setBounds(48, 84, 115, 25);
 		profilePanel.add(fullNameLabel);
 
 		JLabel ageLabel = new JLabel();
@@ -399,7 +385,7 @@ public class Gui extends JFrame {
 			e.printStackTrace();
 		}
 		weightLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		weightLabel.setBounds(48, 251, 93, 25);
+		weightLabel.setBounds(48, 251, 110, 25);
 		profilePanel.add(weightLabel);
 
 		JLabel bustSizeLabel = new JLabel();
@@ -497,20 +483,12 @@ public class Gui extends JFrame {
 		return profilePanel;
 	}
 
-	/**
-	 * 
-	 * @param btn
-	 */
 	private static void applyEditAndSubmitButtonDesign(JButton btn) {
 		btn.setBackground(new Color(160, 121, 95));
 		btn.setForeground(new Color(143, 200, 196));
 		btn.setFont(new Font("Toledo", Font.PLAIN, 17));
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	private static JButton newEditButton() {
 		JButton editButton = new JButton("Edit");
 		editButton.addActionListener(new ActionListener() {
@@ -524,10 +502,6 @@ public class Gui extends JFrame {
 		return editButton;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	private JButton newSubmitButton() {
 		JButton submitButton = new JButton("Submit");
 		applyEditAndSubmitButtonDesign(submitButton);
@@ -633,18 +607,17 @@ public class Gui extends JFrame {
 					}
 
 					mainPanel = createMainPanel();
-					//layeredPane.add(mainPanel);
 
 					switchPanels(mainPanel, layeredPane);
 				} else {
 					formPanel = FormPanel.createFormPanel();
-					//layeredPane.add(formPanel);
 
 					switchPanels(formPanel, layeredPane);
 				}
-
 			}
 		});
 		return submitButton;
 	}
+
+	
 }

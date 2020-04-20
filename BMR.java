@@ -11,11 +11,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
+/**
+ * 
+ * @author Kseniia
+ *
+ */
+@SuppressWarnings("serial")
 public class BMR extends JFrame {
-
+	static Person person = null;
 	private JPanel contentPane;
-	private int bmr = 1700; //FIXME add bmr
+	private int bmr = 0; //FIXME add bmr
 
 	/**
 	 * Launch the application.
@@ -57,7 +62,8 @@ public class BMR extends JFrame {
 	}
 	
 	private JPanel newBmrResulPanel() {
-		
+		person = Gui.getPerson();
+		bmr = Calculations.bmrCalculator(person);
 		
 		JPanel bmrResultPanel = new JPanel();
 		bmrResultPanel.setBackground(new Color(253, 242, 197));
@@ -69,11 +75,10 @@ public class BMR extends JFrame {
 		bmrResultLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 16));
 		bmrResultPanel.add(bmrResultLabel);
 	
-		
 		JTextArea bmiResultArea = new JTextArea("Basal Metabolic Rate is the number of calories required" + 
-		" to keep your body functioning at rest. BMR is also known as your body’s metabolism; therefore," + 
-		" any increase to your metabolic weight, such as exercise, will increase your BMR. Once you’ve " + 
-		"determined your BMR, you can begin to monitor how many calories a day you need to maintain or lose weight.");
+		" to keep your body\nfunctioning at rest. BMR is also known as your body’s metabolism; therefore," + 
+		"\nany increase to your metabolic weight, such as exercise, will increase your BMR.\nOnce you’ve " + 
+		"determined your BMR, you can begin to monitor how many calories\na day you need to maintain or lose weight.");
 		bmiResultArea.setBounds(78, 126, 612, 249);
 		bmiResultArea.setBackground(new Color(253, 242, 197));
 		bmiResultArea.setBorder(new EmptyBorder(0, 70, 0, 70));
@@ -81,8 +86,6 @@ public class BMR extends JFrame {
 		bmiResultArea.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		bmrResultPanel.add(bmiResultArea);
 		
-
 		return bmrResultPanel;
 	}
-
 }

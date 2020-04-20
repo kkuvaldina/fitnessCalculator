@@ -10,11 +10,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
+/**
+ * 
+ * @author Kseniia
+ *
+ */
+@SuppressWarnings("serial")
 public class BodyType extends JFrame {
-
+	static Person person = null;
 	private JPanel contentPane;
-
+	
+//bodyTypeCalculator(person)
+	
 	/**
 	 * Launch the application.
 	 */
@@ -52,14 +59,14 @@ public class BodyType extends JFrame {
 		
 		JPanel bodyTypeResultPanel = newBodyTypeResulPanel();
 		contentPane.add(bodyTypeResultPanel, BorderLayout.CENTER);
-
 	}
 
 	private JPanel newBodyTypeResulPanel() {
+		person = Gui.getPerson();
+		
 		JPanel bodyTypeResultPanel = new JPanel();
 		bodyTypeResultPanel.setBackground(new Color(253, 242, 197));
 		bodyTypeResultPanel.setLayout(null);
 		return bodyTypeResultPanel;
 	}
-
 }

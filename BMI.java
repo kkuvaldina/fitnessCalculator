@@ -17,14 +17,18 @@ import java.nio.file.Paths;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.Component;
-
+/**
+ * 
+ * @author Kseniia
+ *
+ */
 @SuppressWarnings("serial")
 public class BMI extends JFrame {
+	static Person person = null;
 	private JPanel contentPane;
-	double bmi = Gui.getBmiResult(); //FIXME add bmi, call bmiCalculator(Person person) 
-	String result = getBmiResult(); //FIXME add value
-	
-	
+	double bmi = 0; 
+	String result; 
+	Color color = null;
 	
 	/**
 	 * Launch the application.
@@ -69,27 +73,37 @@ public class BMI extends JFrame {
 	private String getBmiResult() {
 		if(bmi<16) {
 			result = "Severe Thinness";
+			color = Color.RED;
 		} else if(bmi>=16 && bmi<17) {
 			result = "Moderate Thinness";
+			color = Color.ORANGE;
 		} else if(bmi>=17 && bmi<18.5) {
 			result = "Mild Thinness";
+			color = Color.ORANGE;
 		} else if(bmi>=18.5 && bmi<25) {
 			result = "Normal";
+			color = Color.GREEN;
 		} else if(bmi>=25 && bmi<30) {
 			result = "Overweight";
+			color = Color.ORANGE;
 		} else if(bmi>=30 && bmi<35) {
 			result = "Obese Class I";
+			color = Color.ORANGE;
 		} else if(bmi>=35 && bmi<40) {
 			result = "Obese Class II";
+			color = Color.RED;
 		} else {
 			result = "Obese Class III";
+			color = Color.RED;
 		}
 		
 		return result;
 	}
 
 	private JPanel newBmiResulPanel() {
-		
+		person = Gui.getPerson();
+		bmi = Calculations.bmiCalculator(person);
+		result = getBmiResult();
 		
 		JPanel bmiResultPanel = new JPanel();
 		bmiResultPanel.setBackground(new Color(253, 242, 197));
@@ -107,14 +121,14 @@ public class BMI extends JFrame {
 		normalBmiLabel.setFont(new Font("Toledo", Font.PLAIN, 14));
 		bmiResultPanel.add(normalBmiLabel);
 		
-		JTextArea bmiResultArea = new JTextArea("BMI is a measurement of a person's leanness or corpulence based on their height and weight, " + 
-		"and is intended to quantify tissue mass. It is widely used as a general indicator of whether a person has a healthy body weight for " + 
-		"their height. Specifically, the value obtained from the calculation of BMI is used to categorize whether a person is underweight, normal" + 
-		" weight, overweight, or obese depending on what range the value falls between. These ranges of BMI vary based on factors such as region " + 
-		"and age, and are sometimes further divided into subcategories such as severely underweight or very severely obese. Being overweight or " + 
-		"underweight can have significant health effects, so while BMI is an imperfect measure of healthy body weight, it is a useful indicator of" + 
-		" whether any additional testing or action is required.");
-		bmiResultArea.setBounds(0, 158, 774, 217);
+		JTextArea bmiResultArea = new JTextArea("BMI is a measurement of a person's leanness or corpulence based on their height and weight,\n" + 
+		"and is intended to quantify tissue mass. It is widely used as a general indicator of whether a\nperson has a healthy body weight for " + 
+		"their height. Specifically, the value obtained from the\ncalculation of BMI is used to categorize whether a person is underweight, normal" + 
+		" weight,\noverweight, or obese depending on what range the value falls between. These ranges of BMI\nvary based on factors such as region " + 
+		"and age, and are sometimes further divided into\nsubcategories such as severely underweight or very severely obese. Being overweight or\n" + 
+		"underweight can have significant health effects, so while BMI is an imperfect measure of\nhealthy body weight, it is a useful indicator of" + 
+		" whether any additional testing or action is\nrequired.");
+		bmiResultArea.setBounds(30, 158, 709, 217);
 		bmiResultArea.setBackground(new Color(253, 242, 197));
 		bmiResultArea.setBorder(new EmptyBorder(0, 70, 0, 70));
 		bmiResultArea.setLineWrap(true);
@@ -124,13 +138,9 @@ public class BMI extends JFrame {
 		JLabel lblNewLabel = new JLabel("(" + result + ")");
 		lblNewLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 15));
 		lblNewLabel.setBounds(416, 12, 167, 30);
-		lblNewLabel.setForeground(new Color(98, 61, 69));
+		lblNewLabel.setForeground(color);
 		bmiResultPanel.add(lblNewLabel);
-		
 		
 		return bmiResultPanel;
 	}
-	
-	
-
 }

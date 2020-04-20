@@ -8,14 +8,20 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
+/**
+ * 
+ * @author Kseniia
+ *
+ */
 @SuppressWarnings("serial")
 public class HealthyWeight extends JFrame {
-
+	static Person person = null;
 	private JPanel contentPane;
-
+//healthyWeightCalculator(person)
+	
 	/**
 	 * Launch the application.
 	 */
@@ -53,13 +59,37 @@ public class HealthyWeight extends JFrame {
 		
 		JPanel healthyWeightResultPanel = newHealthyWeightResulPanel();
 		contentPane.add(healthyWeightResultPanel, BorderLayout.CENTER);
-
 	}
 
 	private JPanel newHealthyWeightResulPanel() {
+		person = Gui.getPerson();
+		
 		JPanel healthyWeightResultPanel = new JPanel();
 		healthyWeightResultPanel.setBackground(new Color(253, 242, 197));
 		healthyWeightResultPanel.setLayout(null);
+		
+		JLabel healthyWeightResultLabel = new JLabel("The healthy weight range for your height is ");
+		healthyWeightResultLabel.setBounds(142, 25, 467, 59);
+		healthyWeightResultLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		healthyWeightResultLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 16));
+		healthyWeightResultPanel.add(healthyWeightResultLabel);
+	
+		JTextArea healthyWeightResultArea = new JTextArea("		Maintaining a Healthy Weight.\nBeing underweight, overweight, or obese are" + 
+				" conditions that lead to significantly\ndifferent health complications. Managing these conditions however, involves\n" + 
+				"addressing many similar underlying issues including diet, exercise, and possible mental\nhealth disorders.\n" +  
+				"In the case of being underweight, increasing calorie intake through eating nutrient-rich\nfoods such as whole-grains," + 
+				" vegetables, lean protein sources, and nuts and seeds\nmore frequently can help underweight individuals to gain weight " + 
+				"in a healthy manner. \nIn addition, exercise such as weight lifting to increase muscle mass can also increase a\nperson's " + 
+				"weight. When the underlying cause of a person being underweight is a mental\nhealth disorder such as anorexia or bulimia " + 
+				"nervosa, treatment involves addressing the\npsychological problems in conjunction with physical approaches to increase weight.");
+		healthyWeightResultArea.setBounds(59, 114, 655, 261);
+		healthyWeightResultArea.setBackground(new Color(253, 242, 197));
+		healthyWeightResultArea.setBorder(new EmptyBorder(0, 70, 0, 70));
+		healthyWeightResultArea.setLineWrap(true);
+		healthyWeightResultArea.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
+		healthyWeightResultPanel.add(healthyWeightResultArea);
+		
+		
 		return healthyWeightResultPanel;
 	}
 }
