@@ -10,13 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import java.awt.GridLayout;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import javax.swing.JTextArea;
-import java.awt.Dimension;
-import java.awt.Component;
+
 /**
  * 
  * @author Kseniia

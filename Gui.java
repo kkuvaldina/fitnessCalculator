@@ -9,7 +9,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLayeredPane;
 import java.awt.CardLayout;
 import java.awt.Color;
-
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Insets;
@@ -18,12 +17,32 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
+
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.CategorySeries;
+import org.knowm.xchart.CategorySeries.CategorySeriesRenderStyle;
+import org.knowm.xchart.QuickChart;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.style.Styler.LegendPosition;
 
 /**
  * 
@@ -38,13 +57,16 @@ public class Gui extends JFrame {
 	private static JPanel mainPanel;
 	private JPanel welcomePanel;
 	private static JTextField FirstNameField;
-	private static JTextField LastNameField;	
+	private static JTextField LastNameField;
 	private static BMI bmi;
 	private static BMR bmr;
 	private static HealthyWeight healthyWeight;
 	private static BodyType bodyType;
 	static Person person;
 	static double bmiResult;
+	static JPanel lineChartWeightPanel;
+	private static List<String> dates = new ArrayList<>();
+	private static List<Number> weights = new ArrayList<>();
 
 	/**
 	 * Launch the application.
@@ -86,28 +108,28 @@ public class Gui extends JFrame {
 	public static double getBmiResult() {
 		return bmiResult;
 	}
-	
+
 	public static JTextField getFirstNameField() {
 		return FirstNameField;
 	}
-	
+
 	public static JTextField getLastNameField() {
 		return LastNameField;
 	}
-	
+
 	public static Person getPerson() {
 		return person;
 	}
-	
+
 	public static void setPerson(Person person2) {
 		person = person2;
-		
+
 	}
-	
+
 	public static JPanel getMainPanel() {
 		return mainPanel;
 	}
-	
+
 	public static JLayeredPane getLayeredPane(int x) {
 		return layeredPane;
 	}
@@ -118,7 +140,7 @@ public class Gui extends JFrame {
 		layeredPane.repaint();
 		layeredPane.revalidate();
 	}
-	
+
 	public static void switchPanels(FormPanel panel, JLayeredPane layeredPane) {
 		layeredPane.removeAll();
 		layeredPane.add(panel);
@@ -132,7 +154,7 @@ public class Gui extends JFrame {
 		btn.setFont(new Font("Toledo", Font.PLAIN, 16));
 	}
 
-	//WELCOME PANEL
+	// WELCOME PANEL
 	private JPanel createWelcomePanel() {
 		welcomePanel = new JPanel();
 		welcomePanel.setBackground(new Color(253, 242, 197));
@@ -203,7 +225,7 @@ public class Gui extends JFrame {
 		return welcomePanel;
 	}
 
-	//MAIN PANEL
+	// MAIN PANEL
 	public static JPanel createMainPanel() {
 		mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(253, 242, 197));
@@ -225,13 +247,6 @@ public class Gui extends JFrame {
 		JPanel profilePanel = createProfilePanel();
 		mainPanel.add(profilePanel);
 
-		JLabel progressLabel = new JLabel("Your Progress");
-		progressLabel.setBounds(505, 67, 155, 50);
-		progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		progressLabel.setFont(new Font("Toledo", Font.PLAIN, 15));
-		progressLabel.setForeground(new Color(98, 61, 69));
-		mainPanel.add(progressLabel);
-
 		JButton bmiButton = newBmiButton();
 		mainPanel.add(bmiButton);
 
@@ -244,10 +259,69 @@ public class Gui extends JFrame {
 		JButton healthyWeightButton = newHealthyWeightButton();
 		mainPanel.add(healthyWeightButton);
 
+		lineChartWeightPanel = newChartWeightPanel();
+		mainPanel.add(lineChartWeightPanel);
+
 		return mainPanel;
 	}
 
-	//4 BUTTONS
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static JPanel newChartWeightPanel() {
+		dates = new ArrayList<>();
+		weights = new ArrayList<>();
+
+		try (Scanner reader = new Scanner(
+				new File(FirstNameField.getText() + LastNameField.getText() + "Weight.txt"))) {
+			while (reader.hasNextLine()) {
+				readWeight(reader.nextLine());
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		CategoryChart chart = new CategoryChartBuilder().width(500).height(480).title("Your Progress")
+				.xAxisTitle("Date").yAxisTitle("Weight").build();
+
+		List<String> x = new ArrayList<>();
+		List<Number> y = new ArrayList<>();
+
+		if (weights.size() > 7) {
+			for (int i = dates.size() - 7; i <= dates.size() - 1; i++) {
+				x.add(dates.get(i));
+			}
+			for (int j = weights.size() - 7; j <= weights.size() - 1; j++) {
+				y.add(weights.get(j));
+			}
+		} else {
+			x = new ArrayList<>(dates);
+			y = new ArrayList<>(weights);
+		}
+
+		chart.getStyler().setPlotGridLinesVisible(false);
+		chart.getStyler().setAvailableSpaceFill(.4);
+		chart.getStyler().setLegendVisible(false);
+		chart.getStyler().setHasAnnotations(true);
+
+		CategorySeries series = chart.addSeries("Weight", x, y);
+		series.setFillColor(new Color(66, 183, 194));
+
+		JPanel lineChartWeightPanel = new XChartPanel(chart);
+		lineChartWeightPanel.setBounds(381, 71, 396, 200);
+
+		return lineChartWeightPanel;
+	}
+
+	private static void readWeight(String line) {
+		String[] arr = line.split(",");
+
+		BigDecimal bd = new BigDecimal(arr[0]).setScale(1, RoundingMode.HALF_UP);
+		double weight = bd.doubleValue();
+
+		Collections.addAll(dates, arr[1]);
+		Collections.addAll(weights, weight);
+	}
+
+	// 4 BUTTONS
 	private static JButton newHealthyWeightButton() {
 		JButton healthyWeightButton = new JButton("Healthy Weight");
 		healthyWeightButton.addActionListener(new ActionListener() {
@@ -300,7 +374,7 @@ public class Gui extends JFrame {
 		return bmiButton;
 	}
 
-	//PROFILE PANEL
+	// PROFILE PANEL
 	private static JPanel createProfilePanel() {
 		JPanel profilePanel = new JPanel();
 		profilePanel.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(98, 61, 69)));
@@ -619,5 +693,4 @@ public class Gui extends JFrame {
 		return submitButton;
 	}
 
-	
 }

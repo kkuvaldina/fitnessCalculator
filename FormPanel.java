@@ -7,12 +7,20 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -40,6 +48,8 @@ public class FormPanel extends JPanel {
 	static JTextField LastNameField = Gui.getLastNameField();
 	static Person person = Gui.getPerson();
 	static JPanel mainPanel = Gui.getMainPanel();
+	private static String unit = "US";
+	private static List<String> weightFile = new ArrayList<>();
 
 	/**
 	 * Create the panel.
@@ -94,6 +104,8 @@ public class FormPanel extends JPanel {
 
 				metricButton.setBackground(new Color(66, 183, 194));
 				metricButton.setForeground(new Color(253, 242, 197));
+
+				unit = "US";
 			}
 		});
 		usButton.setBackground(new Color(222, 202, 152));
@@ -131,6 +143,8 @@ public class FormPanel extends JPanel {
 
 				metricButton.setBackground(new Color(222, 202, 152));
 				metricButton.setForeground(new Color(66, 183, 194));
+
+				unit = "METRIC";
 			}
 		});
 		metricButton.setBounds(484, 67, 290, 37);
@@ -157,7 +171,7 @@ public class FormPanel extends JPanel {
 		return metricButton;
 	}
 
-	//METRIC UNITS PANEL
+	// METRIC UNITS PANEL
 	private static JPanel createMetricUnitsPanel() {
 		metricUnitsPanel = new JPanel();
 		metricUnitsPanel.setBackground(new Color(222, 202, 152));
@@ -165,6 +179,8 @@ public class FormPanel extends JPanel {
 
 		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 		boolean fileExists = new File(fileName).exists();
+
+		boolean weightFileExists = new File(FirstNameField.getText() + LastNameField.getText() + "Weight.txt").exists();
 
 		JLabel ageLabel = new JLabel("Age");
 		ageLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
@@ -349,6 +365,49 @@ public class FormPanel extends JPanel {
 		JButton submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				weightFile = new ArrayList<>();
+
+				try {
+					if (weightFileExists && fileExists) {
+						if (!Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+								.get(0).equals(unit)) { // FIXME
+							try (Scanner reader = new Scanner(
+									new File(FirstNameField.getText() + LastNameField.getText() + "Weight.txt"))) {
+								while (reader.hasNextLine()) {
+									readWeight(reader.nextLine());
+								}
+							} catch (FileNotFoundException e1) {
+								e1.printStackTrace();
+							}
+
+							try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
+									FirstNameField.getText() + LastNameField.getText() + "Weight.txt")))) {
+								out.print("");
+							} catch (IOException ex) {
+								ex.printStackTrace();
+							}
+
+							weightFile.forEach(el -> {
+
+								String[] arr = el.split(",");
+								Double weight = Double.parseDouble(arr[0]) / 2.205;
+
+								try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
+										FirstNameField.getText() + LastNameField.getText() + "Weight.txt", true)))) {
+									out.println(weight + "," + arr[1]);
+								} catch (IOException ex) {
+									ex.printStackTrace();
+								}
+							});
+						}
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd");
+				LocalDate localDate = LocalDate.now();
+
 				if (ageField.getText().isEmpty() || cmField.getText().isEmpty() || weightField.getText().isEmpty()
 						|| bustSizeField.getText().isEmpty() || waistSizeField.getText().isEmpty()
 						|| highHipSizeField.getText().isEmpty() || hipSizeField.getText().isEmpty()) {
@@ -387,12 +446,21 @@ public class FormPanel extends JPanel {
 					} catch (FileNotFoundException ex) {
 						ex.printStackTrace();
 					}
+
+					try (PrintWriter out = new PrintWriter(new BufferedWriter(
+							new FileWriter(FirstNameField.getText() + LastNameField.getText() + "Weight.txt", true)))) {
+						out.println(Double.parseDouble(weightField.getText()) + "," + dtf.format(localDate).toString());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+
 					mainPanel = Gui.createMainPanel();
 					Gui.getLayeredPane(1).add(mainPanel);
 
 					Gui.switchPanels(mainPanel, Gui.getLayeredPane(1));
 				}
 			}
+
 		});
 		submitButton.setBounds(332, 293, 122, 45);
 		submitButton.setBackground(new Color(66, 183, 194));
@@ -403,7 +471,12 @@ public class FormPanel extends JPanel {
 		return metricUnitsPanel;
 	}
 
-	//US UNITS PANEL
+	private static void readWeight(String line) {
+
+		weightFile.add(line);
+	}
+
+	// US UNITS PANEL
 	private static JPanel createUsUnitsPanel() {
 		usUnitsPanel = new JPanel();
 		usUnitsPanel.setBackground(new Color(222, 202, 152));
@@ -411,6 +484,7 @@ public class FormPanel extends JPanel {
 
 		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 		boolean fileExists = new File(fileName).exists();
+		boolean weightFileExists = new File(FirstNameField.getText() + LastNameField.getText() + "Weight.txt").exists();
 
 		JLabel ageLabel = new JLabel("Age");
 		ageLabel.setFont(new Font("Toledo", Font.PLAIN, 13));
@@ -610,6 +684,49 @@ public class FormPanel extends JPanel {
 		JButton submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				weightFile = new ArrayList<>();
+
+				try {
+					if (weightFileExists && fileExists) {
+						if (!Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
+								.get(0).equals(unit)) {
+							try (Scanner reader = new Scanner(
+									new File(FirstNameField.getText() + LastNameField.getText() + "Weight.txt"))) {
+								while (reader.hasNextLine()) {
+									readWeight(reader.nextLine());
+								}
+							} catch (FileNotFoundException e1) {
+								e1.printStackTrace();
+							}
+
+							try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
+									FirstNameField.getText() + LastNameField.getText() + "Weight.txt")))) {
+								out.print("");
+							} catch (IOException ex) {
+								ex.printStackTrace();
+							}
+
+							weightFile.forEach(el -> {
+
+								String[] arr = el.split(",");
+								Double weight = Double.parseDouble(arr[0]) * 2.205;
+
+								try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
+										FirstNameField.getText() + LastNameField.getText() + "Weight.txt", true)))) {
+									out.println(weight + "," + arr[1]);
+								} catch (IOException ex) {
+									ex.printStackTrace();
+								}
+							});
+						}
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd");
+				LocalDate localDate = LocalDate.now();
+
 				if (ageField.getText().isEmpty() || feetField.getText().isEmpty() || inchesField.getText().isEmpty()
 						|| weightField.getText().isEmpty() || bustSizeField.getText().isEmpty()
 						|| waistSizeField.getText().isEmpty() || highHipSizeField.getText().isEmpty()
@@ -630,12 +747,11 @@ public class FormPanel extends JPanel {
 							Integer.parseInt(feetField.getText()), Integer.parseInt(inchesField.getText()),
 							Integer.parseInt(bustSizeField.getText()), Integer.parseInt(waistSizeField.getText()),
 							Integer.parseInt(highHipSizeField.getText()), Integer.parseInt(hipSizeField.getText()));
-					
+
 					Gui.setPerson(person);
-					
+
 					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 
-					System.out.println(gender);// DELETE
 					try (PrintWriter writer = new PrintWriter(fileName)) {
 						writer.println(UnitType.US);
 						writer.println(FirstNameField.getText());
@@ -653,6 +769,14 @@ public class FormPanel extends JPanel {
 					} catch (FileNotFoundException ex) {
 						ex.printStackTrace();
 					}
+
+					try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
+							FirstNameField.getText() + LastNameField.getText() + "Weight.txt", true)));) {
+						out.println(Double.parseDouble(weightField.getText()) + "," + dtf.format(localDate).toString());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+
 					mainPanel = Gui.createMainPanel();
 					Gui.getLayeredPane(1).add(mainPanel);
 

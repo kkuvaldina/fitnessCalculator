@@ -74,9 +74,12 @@ public class HealthyWeight extends JFrame {
 		healthyWeightResultLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 16));
 		healthyWeightResultPanel.add(healthyWeightResultLabel);
 	
-		JTextArea healthyWeightResultArea = new JTextArea("		Maintaining a Healthy Weight.\nBeing underweight, overweight, or obese are" + 
+		JTextArea healthyWeightResultArea = new JTextArea("		Maintaining a Healthy Weight.\r\n" +
+				"\r\n" + 
+				"Being underweight, overweight, or obese are" + 
 				" conditions that lead to significantly\ndifferent health complications. Managing these conditions however, involves\n" + 
-				"addressing many similar underlying issues including diet, exercise, and possible mental\nhealth disorders.\n" +  
+				"addressing many similar underlying issues including diet, exercise, and possible mental\nhealth disorders.\r\n" +  
+				"\r\n" + 
 				"In the case of being underweight, increasing calorie intake through eating nutrient-rich\nfoods such as whole-grains," + 
 				" vegetables, lean protein sources, and nuts and seeds\nmore frequently can help underweight individuals to gain weight " + 
 				"in a healthy manner. \nIn addition, exercise such as weight lifting to increase muscle mass can also increase a\nperson's " + 

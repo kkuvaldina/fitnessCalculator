@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 public class BMR extends JFrame {
 	static Person person = null;
 	private JPanel contentPane;
-	private int bmr = 0; //FIXME add bmr
+	private int bmr = 0; 
 
 	/**
 	 * Launch the application.
