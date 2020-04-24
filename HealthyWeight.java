@@ -21,7 +21,7 @@ import javax.swing.border.EmptyBorder;
 public class HealthyWeight extends JFrame {
 	static Person person = null;
 	private JPanel contentPane;
-//healthyWeightCalculator(person)
+	private String healthyWeightResult = "";
 	
 	/**
 	 * Launch the application.
@@ -68,12 +68,13 @@ public class HealthyWeight extends JFrame {
 	 */
 	private JPanel newHealthyWeightResulPanel() {
 		person = Gui.getPerson();
+		healthyWeightResult = Calculations.healthyWeightCalculator(person);
 		
 		JPanel healthyWeightResultPanel = new JPanel();
 		healthyWeightResultPanel.setBackground(new Color(253, 242, 197));
 		healthyWeightResultPanel.setLayout(null);
 		
-		JLabel healthyWeightResultLabel = new JLabel("The healthy weight range for your height is ");
+		JLabel healthyWeightResultLabel = new JLabel("The healthy weight range for your height is " + healthyWeightResult);
 		healthyWeightResultLabel.setBounds(142, 25, 467, 59);
 		healthyWeightResultLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		healthyWeightResultLabel.setFont(new Font("Trebuchet MS", Font.PLAIN, 16));

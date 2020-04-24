@@ -162,45 +162,86 @@ public class Calculations {
 	 * @return Healthy weight for the user to aim for
 	 */
 	public static String healthyWeightCalculator(Person person) {
-		//This takes the persons current bmi and subtracts the lowest and highest bmi divided by 100 so it can be a percentage
+		// This takes the persons current bmi and subtracts the lowest and highest bmi
+		// divided by 100 so it can be a percentage
 		double lowBmi = (Calculations.bmiCalculator(person) - 18.5) / 100;
 		double highBmi = (Calculations.bmiCalculator(person) - 25) / 100;
-		
-		if(highBmi < 0 || lowBmi < 0) {
-			//This takes into account if the person is below the highest bmi percentage 
-			if(highBmi < 0) {
+
+		//Us calculator
+		if (person.getUnitType() == UnitType.US) {
+			if (highBmi < 0 || lowBmi < 0) {
+				// This takes into account if the person's bmi is below the highest bmi
+				// percentage
+				if (highBmi < 0) {
+					double lowWeight1 = person.getWeightLbs() * lowBmi;
+					double highWeight1 = person.getWeightLbs() * Math.abs(highBmi);
+
+					double lowWeight2 = person.getWeightLbs() - (lowWeight1 * 3);
+					double highWeight2 = person.getWeightLbs() + (highWeight1 * 4);
+					return Math.round(lowWeight2 * 100) / 100 + "lbs - " + Math.round(highWeight2 * 100) / 100 + "lbs";
+				}
+				// This takes into account if the person's bmi is below the lowest bmi
+				// percentage
+				if (lowBmi < 0) {
+					double lowWeight1 = person.getWeightLbs() * Math.abs(lowBmi);
+					double highWeight1 = person.getWeightLbs() * highBmi;
+
+					double lowWeight2 = person.getWeightLbs() + (lowWeight1 * 3);
+					double highWeight2 = person.getWeightLbs() - (highWeight1 * 4);
+					return Math.round(lowWeight2 * 100) / 100 + "lbs - " + Math.round(highWeight2 * 100) / 100 + "lbs";
+				}
+
+			}
+			// This takes into account for the person's bmi is above the healthy bmi
+			// percentages
+			else {
 				double lowWeight1 = person.getWeightLbs() * lowBmi;
-				double highWeight1 = person.getWeightLbs() * Math.abs(highBmi);
-				
-				double lowWeight2 = person.getWeightLbs() - lowWeight1;
-				double highWeight2 = person.getWeightLbs() + highWeight1;
-				return Math.round(lowWeight2 * 100) / 100 + "lbs - " + Math.round(highWeight2 * 100) / 100 + "lbs";
-			}
-			//This takes into account is someone is below the lowest bmi
-			if(lowBmi < 0) {
-				double lowWeight1 = person.getWeightLbs() * Math.abs(lowBmi);
 				double highWeight1 = person.getWeightLbs() * highBmi;
-				
-				double lowWeight2 = person.getWeightLbs() + lowWeight1;
-				double highWeight2 = person.getWeightLbs() - highWeight1;
-				return Math.round(lowWeight2 * 100) / 100 + "lbs - " + Math.round(highWeight2 * 100) / 100 + "lbs";
+
+				double lowWeight2 = person.getWeightLbs() - (lowWeight1 * 3);
+				double highWeight2 = person.getWeightLbs() - (highWeight1 * 4);
+
+				return Math.round(lowWeight2 * 100) / 100 + "Lbs - " + Math.round(highWeight2 * 100) / 100 + "Lbs";
 			}
-		
-		
+			// Metric calculator
+		} else {
+			if (highBmi < 0 || lowBmi < 0) {
+				// This takes into account if the person's bmi is below the highest bmi
+				// percentage
+				if (highBmi < 0) {
+					double lowWeight1 = person.getWeightKg() * lowBmi;
+					double highWeight1 = person.getWeightKg() * Math.abs(highBmi);
+
+					double lowWeight2 = person.getWeightKg() - (lowWeight1 * 3);
+					double highWeight2 = person.getWeightKg() + (highWeight1 * 4);
+					return Math.round(lowWeight2 * 100) / 100 + "Kg - " + Math.round(highWeight2 * 100) / 100 + "Kg";
+				}
+				// This takes into account if the person's bmi is below the lowest bmi
+				// percentage
+				if (lowBmi < 0) {
+					double lowWeight1 = person.getWeightKg() * Math.abs(lowBmi);
+					double highWeight1 = person.getWeightKg() * highBmi;
+
+					double lowWeight2 = person.getWeightKg() + (lowWeight1 * 3);
+					double highWeight2 = person.getWeightKg() - (highWeight1 * 4);
+					return Math.round(lowWeight2 * 100) / 100 + "Kg - " + Math.round(highWeight2 * 100) / 100 + "Kg";
+				}
+
+			}
+			// This takes into account for the person's bmi is above the healthy bmi
+			// percentages
+			else {
+				double lowWeight1 = person.getWeightKg() * lowBmi;
+				double highWeight1 = person.getWeightKg() * highBmi;
+
+				double lowWeight2 = person.getWeightKg() - (lowWeight1 * 3);
+				double highWeight2 = person.getWeightKg() - (highWeight1 * 4);
+				return Math.round(lowWeight2 * 100) / 100 + "Kg - " + Math.round(highWeight2 * 100) / 100 + "Kg";
+			}
 		}
-		//This takes into account for someone that is above the healthy bmi rates
-		else {
-			double lowWeight1 = person.getWeightLbs() * lowBmi;
-			double highWeight1 = person.getWeightLbs() * highBmi;
-			
-			double lowWeight2 = person.getWeightLbs() - lowWeight1;
-			double highWeight2 = person.getWeightLbs() - highWeight1;
-			return Math.round(lowWeight2 * 100) / 100 + "lbs - " + Math.round(highWeight2 * 100) / 100 + "lbs";
-		}
-		
+
 		return null;
 
-		
 	}
 
 }
