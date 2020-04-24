@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 /**
+ * BMI class extends JFrame, gets number from Calculations class and displays user's BMI result and description.
  * 
  * @author Kseniia
  *
@@ -65,6 +66,10 @@ public class BMI extends JFrame {
 		
 	}
 	
+	/**
+	 * Returns the description of BMI number in certain color.
+	 * @return result of the BMI
+	 */
 	private String getBmiResult() {
 		if(bmi<16) {
 			result = "Severe Thinness";
@@ -91,10 +96,13 @@ public class BMI extends JFrame {
 			result = "Obese Class III";
 			color = Color.RED;
 		}
-		
 		return result;
 	}
 
+	/**
+	 * Returns panel with BMI result
+	 * @return BMI panel
+	 */
 	private JPanel newBmiResulPanel() {
 		person = Gui.getPerson();
 		bmi = Calculations.bmiCalculator(person);

@@ -23,9 +23,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,14 +34,11 @@ import javax.swing.border.MatteBorder;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
 import org.knowm.xchart.CategorySeries;
-import org.knowm.xchart.CategorySeries.CategorySeriesRenderStyle;
-import org.knowm.xchart.QuickChart;
-import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.style.Styler.LegendPosition;
 
 /**
+ * Gui class displays the fitness program to calculate your BMI, BMR, Body Type, Healthy Weight.
+ * It creates file and writes your profile data into that file, so user doesn't need to reenter data every time he/she launches program.
  * 
  * @author Kelsie and Kseniia
  *
@@ -63,7 +57,6 @@ public class Gui extends JFrame {
 	private static HealthyWeight healthyWeight;
 	private static BodyType bodyType;
 	static Person person;
-	static double bmiResult;
 	static JPanel lineChartWeightPanel;
 	private static List<String> dates = new ArrayList<>();
 	private static List<Number> weights = new ArrayList<>();
@@ -105,35 +98,61 @@ public class Gui extends JFrame {
 		layeredPane.add(welcomePanel);
 	}
 
-	public static double getBmiResult() {
-		return bmiResult;
-	}
-
+	/**
+	 * Returns First name from JTextField
+	 * @return First name
+	 */
 	public static JTextField getFirstNameField() {
 		return FirstNameField;
 	}
 
+	/**
+	 * Returns Last name from JTextField.
+	 * @return Last name
+	 */
 	public static JTextField getLastNameField() {
 		return LastNameField;
 	}
 
+	/**
+	 * Returns person.
+	 * @return the person
+	 */
 	public static Person getPerson() {
 		return person;
 	}
 
+	/**
+	 * Sets person to a new one.
+	 * @param person2 person to be created
+	 */
 	public static void setPerson(Person person2) {
 		person = person2;
 
 	}
 
+	/**
+	 * Returns Main panel.
+	 * @return main panel
+	 */
 	public static JPanel getMainPanel() {
 		return mainPanel;
 	}
 
+	/**
+	 * Returns LayeredPane in order to switch panels.
+	 * @param x
+	 * @return	LayeredPane
+	 */
 	public static JLayeredPane getLayeredPane(int x) {
 		return layeredPane;
 	}
 
+	/**
+	 * Switches panels.
+	 * @param panel	Panel to be switched to
+	 * @param layeredPane	
+	 */
 	public static void switchPanels(JPanel panel, JLayeredPane layeredPane) {
 		layeredPane.removeAll();
 		layeredPane.add(panel);
@@ -141,6 +160,11 @@ public class Gui extends JFrame {
 		layeredPane.revalidate();
 	}
 
+	/**
+	 * Switches panels.
+	 * @param panel	Panel to be switched to
+	 * @param layeredPane	
+	 */
 	public static void switchPanels(FormPanel panel, JLayeredPane layeredPane) {
 		layeredPane.removeAll();
 		layeredPane.add(panel);
@@ -148,13 +172,21 @@ public class Gui extends JFrame {
 		layeredPane.revalidate();
 	}
 
+	/**
+	 * Applies style for the buttons.
+	 * @param btn	button to be styled
+	 */
 	private static void applyButtonDesign(JButton btn) {
 		btn.setBackground(new Color(66, 183, 194));
 		btn.setForeground(new Color(253, 242, 197));
 		btn.setFont(new Font("Toledo", Font.PLAIN, 16));
 	}
 
-	// WELCOME PANEL
+	//***WELCOME PANEL***
+	/**
+	 * Returns Welcome (first) panel.
+	 * @return	welcome panel
+	 */
 	private JPanel createWelcomePanel() {
 		welcomePanel = new JPanel();
 		welcomePanel.setBackground(new Color(253, 242, 197));
@@ -225,7 +257,11 @@ public class Gui extends JFrame {
 		return welcomePanel;
 	}
 
-	// MAIN PANEL
+	//***MAIN PANEL***
+	/**
+	 * Returns Main panel with Progress chart, Profile and buttons.
+	 * @return	main panel
+	 */
 	public static JPanel createMainPanel() {
 		mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(253, 242, 197));
@@ -265,6 +301,10 @@ public class Gui extends JFrame {
 		return mainPanel;
 	}
 
+	/**
+	 * Returns Progress Chart with weights entered.
+	 * @return	Progress Chart
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static JPanel newChartWeightPanel() {
 		dates = new ArrayList<>();
@@ -278,13 +318,15 @@ public class Gui extends JFrame {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
+		
 		CategoryChart chart = new CategoryChartBuilder().width(500).height(480).title("Your Progress")
 				.xAxisTitle("Date").yAxisTitle("Weight").build();
-
+		
+		//generic collection
 		List<String> x = new ArrayList<>();
 		List<Number> y = new ArrayList<>();
 
+		//Checks number of all weights, displays last 7
 		if (weights.size() > 7) {
 			for (int i = dates.size() - 7; i <= dates.size() - 1; i++) {
 				x.add(dates.get(i));
@@ -311,17 +353,27 @@ public class Gui extends JFrame {
 		return lineChartWeightPanel;
 	}
 
+	/**
+	 * Reads line, splits it and adds data to two lists.
+	 * @param line	line to be read
+	 */
 	private static void readWeight(String line) {
 		String[] arr = line.split(",");
 
 		BigDecimal bd = new BigDecimal(arr[0]).setScale(1, RoundingMode.HALF_UP);
 		double weight = bd.doubleValue();
-
-		Collections.addAll(dates, arr[1]);
+		
+		//generic collection
+		Collections.addAll(dates, arr[1]); 
 		Collections.addAll(weights, weight);
 	}
 
-	// 4 BUTTONS
+	//***4 BUTTONS***
+	/**
+	 * Returns button for Healthy weight calculator. 
+	 * Opens Calculator on click.
+	 * @return	button
+	 */
 	private static JButton newHealthyWeightButton() {
 		JButton healthyWeightButton = new JButton("Healthy Weight");
 		healthyWeightButton.addActionListener(new ActionListener() {
@@ -335,6 +387,11 @@ public class Gui extends JFrame {
 		return healthyWeightButton;
 	}
 
+	/**
+	 * Returns button for Body type calculator.
+	 * Opens Calculator on click.
+	 * @return	button
+	 */
 	private static JButton newBodyTypeButton() {
 		JButton bodyTypeButton = new JButton("Body Type");
 		bodyTypeButton.addActionListener(new ActionListener() {
@@ -348,6 +405,11 @@ public class Gui extends JFrame {
 		return bodyTypeButton;
 	}
 
+	/**
+	 * Returns button for BMR calculator.
+	 * Opens Calculator on click.
+	 * @return	button
+	 */
 	private static JButton newBmrButton() {
 		JButton bmrButton = new JButton("BMR");
 		bmrButton.addActionListener(new ActionListener() {
@@ -361,6 +423,11 @@ public class Gui extends JFrame {
 		return bmrButton;
 	}
 
+	/**
+	 * Returns button for BMI calculator.
+	 * Opens Calculator on click.
+	 * @return	button
+	 */
 	private static JButton newBmiButton() {
 		JButton bmiButton = new JButton("BMI");
 		bmiButton.addActionListener(new ActionListener() {
@@ -374,7 +441,11 @@ public class Gui extends JFrame {
 		return bmiButton;
 	}
 
-	// PROFILE PANEL
+	//***PROFILE PANEL***
+	/**
+	 * Returns panel with profile information taken from the file.
+	 * @return profile panel on the main panel
+	 */
 	private static JPanel createProfilePanel() {
 		JPanel profilePanel = new JPanel();
 		profilePanel.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(98, 61, 69)));
@@ -557,12 +628,20 @@ public class Gui extends JFrame {
 		return profilePanel;
 	}
 
+	/**
+	 * Applies style settings for Edit and Submit buttons.
+	 * @param btn	button to be styled
+	 */
 	private static void applyEditAndSubmitButtonDesign(JButton btn) {
 		btn.setBackground(new Color(160, 121, 95));
 		btn.setForeground(new Color(143, 200, 196));
 		btn.setFont(new Font("Toledo", Font.PLAIN, 17));
 	}
 
+	/**
+	 * Returns Edit button on profile panel in order to edit personal data.
+	 * @return Edit button
+	 */
 	private static JButton newEditButton() {
 		JButton editButton = new JButton("Edit");
 		editButton.addActionListener(new ActionListener() {
@@ -576,6 +655,11 @@ public class Gui extends JFrame {
 		return editButton;
 	}
 
+	/**
+	 * Returns Submit button on the Welcome panel.
+	 * Displays Main panel if profile was already created, Form panel otherwise
+	 * @return Submit button
+	 */
 	private JButton newSubmitButton() {
 		JButton submitButton = new JButton("Submit");
 		applyEditAndSubmitButtonDesign(submitButton);
@@ -586,6 +670,7 @@ public class Gui extends JFrame {
 				String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 				boolean fileExists = new File(fileName).exists();
 
+				//Checks if file was previously created, creates Person
 				if (fileExists) {
 					try {
 						if (Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
@@ -684,6 +769,7 @@ public class Gui extends JFrame {
 
 					switchPanels(mainPanel, layeredPane);
 				} else {
+					//if file wasn't created before, Form panel opens
 					formPanel = FormPanel.createFormPanel();
 
 					switchPanels(formPanel, layeredPane);
@@ -692,5 +778,4 @@ public class Gui extends JFrame {
 		});
 		return submitButton;
 	}
-
 }

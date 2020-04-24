@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -33,6 +32,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 
 /**
+ * Form Panel displays to create a profile for user. There are US or METRIC units choice.
  * 
  * @author Kseniia
  *
@@ -58,6 +58,10 @@ public class FormPanel extends JPanel {
 
 	}
 
+	/**
+	 * Returns Form panel.
+	 * @return Form panel
+	 */
 	public static JPanel createFormPanel() {
 		JPanel formPanel = new JPanel();
 		formPanel.setBackground(new Color(253, 242, 197));
@@ -91,6 +95,10 @@ public class FormPanel extends JPanel {
 		return formPanel;
 	}
 
+	/**
+	 * Returns button to switch to US units.
+	 * @return US button
+	 */
 	private static JButton newUsButton() {
 		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 		boolean fileExists = new File(fileName).exists();
@@ -129,6 +137,10 @@ public class FormPanel extends JPanel {
 		return usButton;
 	}
 
+	/**
+	 * Returns button to switch to METRIC units.
+	 * @return METRIC button
+	 */
 	private static JButton newMetricButton() {
 		String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 		boolean fileExists = new File(fileName).exists();
@@ -171,7 +183,11 @@ public class FormPanel extends JPanel {
 		return metricButton;
 	}
 
-	// METRIC UNITS PANEL
+	//***METRIC UNITS PANEL***
+	/**
+	 * Returns panel for Metric units panel.
+	 * @return Metric units panel
+	 */
 	private static JPanel createMetricUnitsPanel() {
 		metricUnitsPanel = new JPanel();
 		metricUnitsPanel.setBackground(new Color(222, 202, 152));
@@ -367,10 +383,11 @@ public class FormPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				weightFile = new ArrayList<>();
 
+				//Checks if files exist and if units were switched. In this case calculates weight in new unit and overwrites file
 				try {
 					if (weightFileExists && fileExists) {
 						if (!Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
-								.get(0).equals(unit)) { // FIXME
+								.get(0).equals(unit)) { 
 							try (Scanner reader = new Scanner(
 									new File(FirstNameField.getText() + LastNameField.getText() + "Weight.txt"))) {
 								while (reader.hasNextLine()) {
@@ -408,6 +425,7 @@ public class FormPanel extends JPanel {
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd");
 				LocalDate localDate = LocalDate.now();
 
+				//Doesn't allow to submit if all fields weren't filled
 				if (ageField.getText().isEmpty() || cmField.getText().isEmpty() || weightField.getText().isEmpty()
 						|| bustSizeField.getText().isEmpty() || waistSizeField.getText().isEmpty()
 						|| highHipSizeField.getText().isEmpty() || hipSizeField.getText().isEmpty()) {
@@ -421,6 +439,7 @@ public class FormPanel extends JPanel {
 						gender = 0;
 					}
 
+					//Creates new person
 					person = new Person(FirstNameField.getText(), LastNameField.getText(),
 							Integer.parseInt(ageField.getText()), gender, Double.parseDouble(weightField.getText()),
 							Double.parseDouble(cmField.getText()), Double.parseDouble(bustSizeField.getText()),
@@ -430,6 +449,7 @@ public class FormPanel extends JPanel {
 
 					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 
+					//Creates and writes a file with personal data 
 					try (PrintWriter writer = new PrintWriter(fileName)) {
 						writer.println(UnitType.METRIC);
 						writer.println(FirstNameField.getText());
@@ -447,6 +467,7 @@ public class FormPanel extends JPanel {
 						ex.printStackTrace();
 					}
 
+					//Creates and writes a file with weight and date
 					try (PrintWriter out = new PrintWriter(new BufferedWriter(
 							new FileWriter(FirstNameField.getText() + LastNameField.getText() + "Weight.txt", true)))) {
 						out.println(Double.parseDouble(weightField.getText()) + "," + dtf.format(localDate).toString());
@@ -471,12 +492,19 @@ public class FormPanel extends JPanel {
 		return metricUnitsPanel;
 	}
 
+	/**
+	 * Reads each line from Weight file, adds it to the list of weights.
+	 * @param line	line to be read
+	 */
 	private static void readWeight(String line) {
-
 		weightFile.add(line);
 	}
 
-	// US UNITS PANEL
+	//***US UNITS PANEL***
+	/**
+	 * Returns panel for US units panel
+	 * @return US units panel
+	 */
 	private static JPanel createUsUnitsPanel() {
 		usUnitsPanel = new JPanel();
 		usUnitsPanel.setBackground(new Color(222, 202, 152));
@@ -685,7 +713,8 @@ public class FormPanel extends JPanel {
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				weightFile = new ArrayList<>();
-
+				
+				//Checks if files exist and if units were switched. In this case calculates weight in new unit and overwrites file
 				try {
 					if (weightFileExists && fileExists) {
 						if (!Files.readAllLines(Paths.get(FirstNameField.getText() + LastNameField.getText() + ".txt"))
@@ -726,7 +755,8 @@ public class FormPanel extends JPanel {
 
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd");
 				LocalDate localDate = LocalDate.now();
-
+				
+				//Doesn't allow to submit if all fields weren't filled
 				if (ageField.getText().isEmpty() || feetField.getText().isEmpty() || inchesField.getText().isEmpty()
 						|| weightField.getText().isEmpty() || bustSizeField.getText().isEmpty()
 						|| waistSizeField.getText().isEmpty() || highHipSizeField.getText().isEmpty()
@@ -742,6 +772,7 @@ public class FormPanel extends JPanel {
 						gender = 0;
 					}
 
+					//Creates new person
 					person = new Person(FirstNameField.getText(), LastNameField.getText(),
 							Integer.parseInt(ageField.getText()), gender, Integer.parseInt(weightField.getText()),
 							Integer.parseInt(feetField.getText()), Integer.parseInt(inchesField.getText()),
@@ -752,6 +783,7 @@ public class FormPanel extends JPanel {
 
 					String fileName = FirstNameField.getText() + LastNameField.getText() + ".txt";
 
+					//Creates and writes a file with personal data
 					try (PrintWriter writer = new PrintWriter(fileName)) {
 						writer.println(UnitType.US);
 						writer.println(FirstNameField.getText());
@@ -770,6 +802,7 @@ public class FormPanel extends JPanel {
 						ex.printStackTrace();
 					}
 
+					//Creates and writes a file with weight and date
 					try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
 							FirstNameField.getText() + LastNameField.getText() + "Weight.txt", true)));) {
 						out.println(Double.parseDouble(weightField.getText()) + "," + dtf.format(localDate).toString());

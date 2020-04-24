@@ -14,6 +14,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextArea;
 
 /**
+ * Body Type class extends JFrame, gets result from Calculations class and displays user's result and description.
  * 
  * @author Kseniia
  *
@@ -48,6 +49,10 @@ public class BodyType extends JFrame {
 		});
 	}
 
+	/**
+	 * Returns the number of body type image and description to display.
+	 * @return the number of body type
+	 */
 	private int switchLblImage() {
 		int num;
 		switch (bodyTypeResult) {
@@ -127,14 +132,11 @@ public class BodyType extends JFrame {
 
 		bodyTypeResultPanel = newBodyTypeResulPanel();
 		contentPane.add(bodyTypeResultPanel, BorderLayout.CENTER);
-
-		
-
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Returns label to display image.
+	 * @return JLabel to display image
 	 */
 	private JLabel newPicLabel() {
 		JLabel lblpicLabel = new JLabel(new ImageIcon(BodyType.class.getResource(bodyTypeImageArr[lblImage])));
@@ -142,8 +144,8 @@ public class BodyType extends JFrame {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Returns panel for body type result.
+	 * @return body type panel
 	 */
 	private JPanel newBodyTypeResulPanel() {
 		person = Gui.getPerson();

@@ -12,6 +12,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 /**
+ * BMR class extends JFrame, gets number from Calculations class and displays user's BMR result and description.
  * 
  * @author Kseniia
  *
@@ -61,6 +62,10 @@ public class BMR extends JFrame {
 		contentPane.add(bmrResultPanel, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Returns panel with BMR result
+	 * @return BMR panel
+	 */
 	private JPanel newBmrResulPanel() {
 		person = Gui.getPerson();
 		bmr = Calculations.bmrCalculator(person);

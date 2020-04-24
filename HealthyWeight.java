@@ -12,6 +12,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 /**
+ * Healthy Weight class extends JFrame, gets result from Calculations class and displays user's result and description.
  * 
  * @author Kseniia
  *
@@ -61,6 +62,10 @@ public class HealthyWeight extends JFrame {
 		contentPane.add(healthyWeightResultPanel, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Returns panel for healthy weight result.
+	 * @return healthy weight panel
+	 */
 	private JPanel newHealthyWeightResulPanel() {
 		person = Gui.getPerson();
 		
@@ -91,7 +96,6 @@ public class HealthyWeight extends JFrame {
 		healthyWeightResultArea.setLineWrap(true);
 		healthyWeightResultArea.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 		healthyWeightResultPanel.add(healthyWeightResultArea);
-		
 		
 		return healthyWeightResultPanel;
 	}
